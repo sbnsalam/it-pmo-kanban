@@ -52,7 +52,7 @@ These lists are the `PROJECTS`, `CATEGORIES`, `PRIORITIES` and `STATUSES` arrays
 
 ## Email notifications
 
-When a task is added, the page posts its details to FormSubmit's AJAX endpoint, which emails them as a table. This is the only network request the page makes.
+When a task is added, the page posts its details to FormSubmit's AJAX endpoint, which emails them as a table. This is the only network request the page makes. The chat button at the bottom right speaks a greeting and links to WhatsApp (`WHATSAPP_NUMBER`), which opens in a new tab.
 
 1. Open `index.html` and find this line near the top of the `<script>` block:
    ```js
