@@ -69,6 +69,18 @@
     --info-bg:      light-dark(#e3edf8, #172a47);
     --info-line:    light-dark(#b9cfe9, #2b4a75);
 
+    /* Burn-down charts (validated for CVD + contrast on --surface in both themes) */
+    --chart-actual: light-dark(#1d5fa8, #4f8fe8);
+    --chart-ideal:  light-dark(#b7791f, #c4862a);
+
+    /* Assignee avatars: picked per name by avatarTone() */
+    --avatar-0-bg: light-dark(#dbe8fb, #1c3358);  --avatar-0-ink: light-dark(#174a8b, #b5d1ff);
+    --avatar-1-bg: light-dark(#dcf3e6, #163a26);  --avatar-1-ink: light-dark(#1b6a3a, #9fe3b9);
+    --avatar-2-bg: light-dark(#fbe6d6, #45291a);  --avatar-2-ink: light-dark(#94461a, #ffc39e);
+    --avatar-3-bg: light-dark(#ece3fb, #312449);  --avatar-3-ink: light-dark(#5b3a9c, #d4bfff);
+    --avatar-4-bg: light-dark(#d9f1f3, #133a40);  --avatar-4-ink: light-dark(#14656e, #9fe0e8);
+    --avatar-5-bg: light-dark(#fbe1ea, #45192a);  --avatar-5-ink: light-dark(#97234d, #ffb3cc);
+
     --focus: #f5a623;
     --scrim: rgba(4, 10, 20, 0.55);
 
@@ -162,9 +174,9 @@
   .summary strong { font-variant-numeric: tabular-nums; }
   .summary .is-overdue { background: var(--header-alert); border-color: var(--header-alert-line); }
 
-  .header-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
   .header-nav { display: flex; gap: var(--space-1); }
-  .demo-note { font-size: 12px; opacity: 0.75; margin: 0; flex-basis: 100%; }
+  .demo-note { font-size: 12px; opacity: 0.75; margin: 0; }
 
   .btn {
     display: inline-flex;
@@ -255,6 +267,24 @@
   .form-actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); }
 
   /* ============================================================
+     View switch: Board | Burn-down
+     ============================================================ */
+  .view-switch {
+    display: inline-flex; gap: 2px; padding: 3px; flex: none;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  }
+  .view-btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    min-height: 32px; padding: var(--space-1) var(--space-3);
+    border: 0; border-radius: 4px; background: transparent;
+    color: var(--ink-soft); font-weight: 600;
+    transition: background-color var(--dur), color var(--dur);
+  }
+  .view-btn:hover { color: var(--ink); }
+  .view-btn[aria-pressed="true"] { background: var(--surface); color: var(--brand-strong); box-shadow: var(--shadow); }
+  .board[hidden], .insights[hidden] { display: none; }
+
+  /* ============================================================
      Filter bar
      ============================================================ */
   .filters {
@@ -269,6 +299,77 @@
   .filters .btn { flex: 0 0 auto; }
   .filter-status { font-size: 12px; color: var(--ink-soft); margin: 0; width: 100%; }
   .filter-status:empty { display: none; }
+
+  /* ============================================================
+     Burn-down insights: stat tiles + two charts
+     ============================================================ */
+  .insights { padding: var(--space-4); margin-bottom: var(--space-4); }
+  .insights-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2) var(--space-4); }
+  .insights-head h2 { margin: 0; font-size: 16px; color: var(--heading); }
+  .insights-head p { margin: 0; font-size: 12px; color: var(--ink-soft); }
+  .insights-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); margin: var(--space-4) 0; }
+  .stat { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-3); min-width: 0; }
+  .stat-label { margin: 0; font-size: 12px; color: var(--ink-soft); }
+  .stat-value { margin: 2px 0 0; font-size: 24px; font-weight: 650; line-height: 1.2; color: var(--ink); }
+  .stat-sub { margin: 2px 0 0; font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: var(--space-1); flex-wrap: wrap; }
+  .stat-chip { display: inline-flex; align-items: center; gap: 3px; border-radius: 999px; padding: 0 var(--space-2); font-weight: 700; border: 1px solid; }
+  .stat-chip svg.icon { width: 12px; height: 12px; }
+  .stat-chip.good { color: var(--success); background: var(--success-bg); border-color: var(--success-line); }
+  .stat-chip.bad  { color: var(--danger);  background: var(--danger-bg);  border-color: var(--danger-line); }
+
+  .chart-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-4); }
+  .chart-card { min-width: 0; }
+  .chart-card h3 { margin: 0; font-size: 13px; color: var(--heading); }
+  .chart-card .chart-sub { margin: 0 0 var(--space-2); font-size: 12px; color: var(--ink-soft); }
+  .legend { display: flex; gap: var(--space-4); margin: 0 0 var(--space-2); padding: 0; list-style: none; font-size: 12px; color: var(--ink-soft); }
+  .legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .legend .key { width: 16px; height: 2px; border-radius: 1px; }
+  .key-actual { background: var(--chart-actual); }
+  .key-ideal  { background: var(--chart-ideal); }
+
+  .chart-box { position: relative; }
+  .chart-box svg { display: block; width: 100%; overflow: visible; }
+  .chart-box svg:focus-visible { outline-offset: 4px; }
+  .chart-box text { fill: var(--ink-soft); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .chart-box .label-strong { fill: var(--ink); font-weight: 600; }
+  .grid-line { stroke: var(--line); stroke-width: 1; }
+  .axis-line { stroke: var(--ink-soft); stroke-width: 1; opacity: 0.6; }
+  .today-line { stroke: var(--ink-soft); stroke-width: 1; }
+  .line-actual { fill: none; stroke: var(--chart-actual); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .line-ideal  { fill: none; stroke: var(--chart-ideal);  stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .area-actual { fill: var(--chart-actual); opacity: 0.1; }
+  .dot-actual  { fill: var(--chart-actual); stroke: var(--surface); stroke-width: 2; }
+  .xhair { stroke: var(--ink); stroke-width: 1; opacity: 0.5; }
+  .hit { fill: transparent; cursor: crosshair; }
+  .bar { fill: var(--chart-actual); transition: opacity var(--dur); }
+  .bar-hit { fill: transparent; cursor: default; }
+  .bar-hit:hover + .bar, .bar-hit:focus + .bar { opacity: 0.75; }
+
+  .chart-tip {
+    position: absolute; top: 0; z-index: 2;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+    padding: var(--space-2) var(--space-3);
+    font-size: 12px; white-space: nowrap;
+  }
+  .chart-tip[hidden] { display: none; }
+  .tip-title { margin: 0 0 2px; color: var(--ink-soft); }
+  .tip-row { display: flex; align-items: center; gap: var(--space-2); }
+  .tip-row strong { font-variant-numeric: tabular-nums; }
+  .tip-row .key { width: 12px; height: 2px; border-radius: 1px; }
+
+  .chart-table { margin-top: var(--space-3); font-size: 12px; }
+  .chart-table summary { cursor: pointer; color: var(--brand-strong); font-weight: 600; width: max-content; }
+  .chart-table .tables { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-2); max-height: 240px; overflow: auto; }
+  .chart-table table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .chart-table caption { text-align: left; font-weight: 600; color: var(--heading); padding-bottom: var(--space-1); }
+  .chart-table th, .chart-table td { text-align: left; padding: 2px var(--space-3) 2px 0; border-bottom: 1px solid var(--line); }
+  .chart-table th { color: var(--ink-soft); font-weight: 600; }
+  .chart-table td.num, .chart-table th.num { text-align: right; }
 
   /* ============================================================
      Kanban board
@@ -330,55 +431,123 @@
 
   /* ============================================================
      Task card
+     Top: priority + ID. Body: title, description, project, category.
+     Footer: assignee avatar + due chip. Actions: Move ▸ + delete.
      ============================================================ */
   .card {
+    --prio: var(--prio-medium);
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-left: 4px solid var(--prio-medium);
-    border-radius: var(--radius-sm);
-    padding: var(--space-3);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-3) var(--space-2) calc(var(--space-3) + 3px);
     box-shadow: var(--shadow);
     cursor: grab;
-    transition: box-shadow var(--dur), border-color var(--dur);
+    transition: box-shadow var(--dur), transform var(--dur) var(--ease-out), border-color var(--dur);
   }
-  .card:hover { box-shadow: var(--shadow-lg); }
-  .card.dragging { opacity: 0.5; }
-  .card[data-priority="Critical"] { border-left-color: var(--prio-critical); }
-  .card[data-priority="High"]     { border-left-color: var(--prio-high); }
-  .card[data-priority="Medium"]   { border-left-color: var(--prio-medium); }
-  .card[data-priority="Low"]      { border-left-color: var(--prio-low); }
+  /* Priority accent: an inset strip, so the card keeps its rounded corners */
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: var(--space-3); bottom: var(--space-3);
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--prio);
+  }
+  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); border-color: var(--ink-soft); }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.5; transform: rotate(1deg); }
+  .card[data-priority="Critical"] { --prio: var(--prio-critical); }
+  .card[data-priority="High"]     { --prio: var(--prio-high); }
+  .card[data-priority="Medium"]   { --prio: var(--prio-medium); }
+  .card[data-priority="Low"]      { --prio: var(--prio-low); }
 
   .card-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
-  .task-id { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
-  .card-title { font-size: 14px; font-weight: 600; margin: var(--space-1) 0 var(--space-2); overflow-wrap: anywhere; color: var(--ink); }
-  .card-meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-2); font-size: 12px; }
-  .card-meta dt { color: var(--ink-soft); }
-  .card-meta dd { margin: 0; overflow-wrap: anywhere; }
-  .card-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: var(--space-2); }
+  .task-id { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.02em; }
+  .card-title { font-size: 15px; line-height: 1.35; font-weight: 650; margin: var(--space-2) 0 var(--space-1); overflow-wrap: anywhere; color: var(--ink); }
+  .card-desc {
+    margin: 0 0 var(--space-2);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+  .card-context { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: 12px; color: var(--ink-soft); }
+  .card-project { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .card-project svg.icon, .due svg.icon { width: 14px; height: 14px; }
 
+  /* Priority pill: bars + word, so priority never relies on colour alone */
   .pill {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     border-radius: 999px;
-    padding: 1px var(--space-2);
+    padding: 1px var(--space-2) 1px 6px;
     font-size: 11px;
     font-weight: 700;
     border: 1px solid currentColor;
   }
+  .prio-bars { width: 12px; height: 10px; flex: none; }
+  .prio-bars rect { fill: currentColor; }
+  .prio-bars .off { opacity: 0.25; }
   .pill-Critical { color: var(--pill-critical-ink); background: var(--pill-critical-bg); }
   .pill-High     { color: var(--pill-high-ink);     background: var(--pill-high-bg); }
   .pill-Medium   { color: var(--pill-medium-ink);   background: var(--pill-medium-bg); }
   .pill-Low      { color: var(--pill-low-ink);      background: var(--pill-low-bg); }
-  .tag { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; }
-  .overdue { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-line); border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; font-weight: 700; }
+  .tag { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0 6px; font-size: 11px; }
 
-  .card-actions { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--line); }
-  .move-select { font-size: 12px; min-height: 32px; padding: 2px var(--space-1); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--field); max-width: 60%; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: var(--space-3); }
+  .assignee { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: 12px; font-weight: 600; }
+  .assignee-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .avatar {
+    display: inline-grid; place-items: center; flex: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+    background: var(--avatar-bg); color: var(--avatar-ink);
+  }
+  .avatar[data-tone="0"] { --avatar-bg: var(--avatar-0-bg); --avatar-ink: var(--avatar-0-ink); }
+  .avatar[data-tone="1"] { --avatar-bg: var(--avatar-1-bg); --avatar-ink: var(--avatar-1-ink); }
+  .avatar[data-tone="2"] { --avatar-bg: var(--avatar-2-bg); --avatar-ink: var(--avatar-2-ink); }
+  .avatar[data-tone="3"] { --avatar-bg: var(--avatar-3-bg); --avatar-ink: var(--avatar-3-ink); }
+  .avatar[data-tone="4"] { --avatar-bg: var(--avatar-4-bg); --avatar-ink: var(--avatar-4-ink); }
+  .avatar[data-tone="5"] { --avatar-bg: var(--avatar-5-bg); --avatar-ink: var(--avatar-5-ink); }
+
+  .due {
+    display: inline-flex; align-items: center; gap: var(--space-1); flex: none;
+    font-size: 11.5px; font-weight: 600; white-space: nowrap;
+    color: var(--ink-soft);
+    border: 1px solid transparent; border-radius: 999px;
+    padding: 1px var(--space-2);
+  }
+  .due-soon    { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-line); }
+  .due-overdue { color: var(--danger);  background: var(--danger-bg);  border-color: var(--danger-line); }
+  .due-done    { color: var(--success); }
+
+  /* Done cards recede a little but keep readable contrast */
+  .card[data-status="Done"] { background: var(--surface-2); box-shadow: none; }
+  .card[data-status="Done"] .card-title { color: var(--ink-soft); }
+  .card[data-status="Done"]::before { background: var(--status-done); }
+
+  .card-actions { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--line); }
+  .move-select {
+    font-size: 12px; font-weight: 600; color: var(--ink-soft);
+    min-height: 30px; padding: 2px var(--space-1);
+    border: 1px solid transparent; border-radius: var(--radius-sm);
+    background: transparent;
+    max-width: 65%;
+    transition: background-color var(--dur), border-color var(--dur), color var(--dur);
+  }
+  .move-select:hover { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
   .icon-btn {
     display: inline-flex; align-items: center; justify-content: center;
     border: 1px solid transparent;
     background: transparent;
     border-radius: var(--radius-sm);
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     padding: 0;
     color: var(--ink-soft);
     transition: background-color var(--dur), color var(--dur);
@@ -482,6 +651,8 @@
      ============================================================ */
   @media (max-width: 1023px) {
     .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .chart-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 767px) {
     .app-header { padding: var(--space-3) var(--space-4); }
@@ -497,6 +668,27 @@
     .move-select { min-height: 44px; }
     .info-head, .tabs { padding-left: var(--space-4); padding-right: var(--space-4); }
     .tab-panel { padding: var(--space-4); }
+  }
+  /* Full-screen app shell: the board fills the viewport and each column scrolls */
+  @media (min-width: 1024px) {
+    body { height: 100dvh; display: flex; flex-direction: column; }
+    .app-header { flex: none; }
+    .layout { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    main { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .filters, .insights { flex: none; }
+    .board { flex: 1; min-height: 360px; grid-template-rows: minmax(0, 1fr); }
+    .column { display: flex; flex-direction: column; min-height: 0; }
+    .column-header { flex: none; }
+    .card-list { flex: 1; min-height: 0; overflow-y: auto; padding: 2px 4px 6px 2px; margin: -2px -4px 0 -2px; }
+  }
+  @media (max-width: 767px) {
+    .header-nav .btn-label {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    .header-nav .btn { width: 44px; padding: var(--space-2); }
+    .view-btn { min-height: 44px; }
+    .header-actions { margin-left: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none; transition: none; }
@@ -527,15 +719,15 @@
     </span>
   </h1>
   <ul class="summary" id="summary" aria-label="Board summary"></ul>
+  <p class="demo-note">Demo mode: data is kept in memory and resets on refresh.</p>
   <div class="header-actions">
     <nav class="header-nav" aria-label="Help and information">
-      <button type="button" class="btn btn-header" data-info="help" aria-haspopup="dialog">Help</button>
-      <button type="button" class="btn btn-header" data-info="faq" aria-haspopup="dialog">FAQ</button>
-      <button type="button" class="btn btn-header" data-info="about" aria-haspopup="dialog">About</button>
+      <button type="button" class="btn btn-header" data-info="help" aria-haspopup="dialog" title="Help"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.5v.01"/></g></svg><span class="btn-label">Help</span></button>
+      <button type="button" class="btn btn-header" data-info="faq" aria-haspopup="dialog" title="FAQ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></g></svg><span class="btn-label">FAQ</span></button>
+      <button type="button" class="btn btn-header" data-info="about" aria-haspopup="dialog" title="About"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></g></svg><span class="btn-label">About</span></button>
     </nav>
     <button type="button" class="btn btn-header btn-icon" id="theme-toggle"></button>
-    <button type="button" class="btn btn-light" id="toggle-form" aria-controls="task-drawer" aria-haspopup="dialog">+ Add Task</button>
-    <p class="demo-note">Demo mode: data is kept in memory and resets on refresh.</p>
+    <button type="button" class="btn btn-light" id="toggle-form" aria-controls="task-drawer" aria-haspopup="dialog"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 5v14M5 12h14"/></g></svg>Add Task</button>
   </div>
 </header>
 
@@ -600,7 +792,11 @@
     <!-- ============================================================
          Filter bar
          ============================================================ -->
-    <section class="filters panel" aria-label="Filter tasks">
+    <section class="filters panel" aria-label="View and filter tasks">
+      <div class="view-switch" role="group" aria-label="View">
+        <button type="button" class="view-btn" data-view="board" aria-pressed="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></g></svg>Board</button>
+        <button type="button" class="view-btn" data-view="insights" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4v16h16"/><path d="M7 7l4 5 3-2 5 6"/></g></svg>Burn-down</button>
+      </div>
       <div class="field">
         <label for="flt-project">Project</label>
         <select id="flt-project"></select>
@@ -615,6 +811,19 @@
       </div>
       <button type="button" class="btn btn-ghost" id="flt-clear">Clear filters</button>
       <p class="filter-status" id="filter-status" aria-live="polite"></p>
+    </section>
+
+    <!-- ============================================================
+         Burn-down insights (rendered by renderInsights)
+         ============================================================ -->
+    <section class="insights panel" aria-labelledby="insights-heading" hidden>
+      <div class="insights-head">
+        <div class="insights-title">
+          <h2 id="insights-heading">Burn-down</h2>
+          <p id="insights-scope"></p>
+        </div>
+      </div>
+      <div id="insights-body"></div>
     </section>
 
     <!-- ============================================================
@@ -653,10 +862,11 @@
   <section class="tab-panel" role="tabpanel" id="panel-help" aria-labelledby="tab-help" tabindex="0">
     <h3>Quick start</h3>
     <ol>
-      <li><strong>Add a task</strong> with <strong>+ Add Task</strong> in the header. A panel slides in from the right; title, assignee and due date are required.</li>
+      <li><strong>Add a task</strong> with <strong>Add Task</strong> (the + button) in the header. A panel slides in from the right; title, assignee and due date are required.</li>
       <li><strong>Move a task</strong> by dragging its card to another column, or pick a column from the card's <strong>Move ▸</strong> menu.</li>
       <li><strong>Delete a task</strong> with the <strong>×</strong> on its card, then confirm with <strong>Yes</strong>. Choose <strong>No</strong> to keep it.</li>
       <li><strong>Filter the board</strong> by project, assignee or priority. Column counts show filtered tasks; the header chips always count everything.</li>
+      <li><strong>See progress</strong> with <strong>Burn-down</strong> next to the filters: open tasks against an ideal line, weekly completions and a projected finish. <strong>Board</strong> switches back.</li>
       <li><strong>Switch theme</strong> with the sun / moon button. The board follows your system setting until you choose.</li>
     </ol>
     <h3>Columns</h3>
@@ -763,6 +973,11 @@ const APP_NAME = "Throughline";
 const APP_VERSION = "2.0";
 const TASK_ID_PREFIX = "ITPM-";
 const TOAST_MS = 4500;
+const BURNDOWN_PAST_DAYS = 21;  // period starts this many days before today
+const BURNDOWN_AHEAD_DAYS = 14; // period ends (ideal line hits zero) this many days after today
+const VELOCITY_DAYS = 14;       // completions in this window set the pace for the projected finish
+const WEEKS_SHOWN = 5;          // bars in the "completed per week" chart
+const DUE_SOON_DAYS = 3; // open tasks due within this many days get an amber chip
 
 /* ============================================================
    Reference data
@@ -787,6 +1002,10 @@ const INFO_TABS = ["help", "faq", "about"];
 const ICONS = {
   close: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
   sun: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>',
+  folder: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>',
+  calendar: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></g></svg>',
+  alert: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.01"/></g></svg>',
+  check: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
   moon: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>',
 };
 
@@ -797,7 +1016,10 @@ const state = {
   tasks: [],
   filters: { project: "", assignee: "", priority: "" },
   theme: null, // null follows the OS; "light" / "dark" once the user picks
+  view: "board", // "board" or "insights" (burn-down)
 };
+// Derived chart geometry for tooltips; rebuilt by every renderInsights().
+let chartModel = null;
 let nextId = 1;
 
 const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -834,6 +1056,45 @@ function formatDate(iso) {
 function isOverdue(task) {
   return task.status !== "Done" && task.dueDate < todayIso();
 }
+function daysUntil(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((new Date(y, m - 1, d) - today) / 86400000);
+}
+function shortDate(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const opts = { day: "numeric", month: "short" };
+  if (y !== new Date().getFullYear()) opts.year = "numeric";
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, opts);
+}
+// Due chip text and tone: overdue / due soon read as words, not just colour.
+function dueInfo(task) {
+  if (task.status === "Done") return { tone: "done", icon: ICONS.check, label: shortDate(task.dueDate) };
+  const n = daysUntil(task.dueDate);
+  if (n < 0) return { tone: "overdue", icon: ICONS.alert, label: `${-n} day${n === -1 ? "" : "s"} overdue` };
+  if (n === 0) return { tone: "soon", icon: ICONS.calendar, label: "Due today" };
+  if (n === 1) return { tone: "soon", icon: ICONS.calendar, label: "Due tomorrow" };
+  if (n <= DUE_SOON_DAYS) return { tone: "soon", icon: ICONS.calendar, label: `Due in ${n} days` };
+  return { tone: "", icon: ICONS.calendar, label: shortDate(task.dueDate) };
+}
+function initials(name) {
+  const parts = name.trim().split(/\s+/);
+  const letters = parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].slice(0, 2);
+  return letters.toUpperCase();
+}
+// Stable colour per person: same name, same avatar tone.
+function avatarTone(name) {
+  let sum = 0;
+  for (const ch of name) sum += ch.codePointAt(0);
+  return sum % 6;
+}
+function priorityBars(priority) {
+  const level = PRIORITIES.length - PRIORITIES.indexOf(priority);
+  return '<svg class="prio-bars" viewBox="0 0 12 10" aria-hidden="true" focusable="false">' +
+    [0, 1, 2, 3].map((i) => `<rect x="${i * 3}" y="${7 - i * 2.33}" width="2" height="${3 + i * 2.33}" rx="0.6"${i < level ? "" : ' class="off"'}/>`).join("") +
+    "</svg>";
+}
 function generateTaskId() {
   return TASK_ID_PREFIX + String(nextId++).padStart(4, "0");
 }
@@ -849,20 +1110,32 @@ function fillSelect(select, values, { includeAll = false, selected } = {}) {
 }
 
 /* ============================================================
-   Seed data: 8 demo tasks across all four columns
+   Seed data: 12 demo tasks with history (created / completed days
+   ago) so the burn-down has a story: two tasks are added mid-period
+   and the team is running behind the ideal line.
    ============================================================ */
 function seedTasks() {
   const seed = [
-    { title: "Migrate FX pricing service to AWS", description: "Lift the FX rate pricing engine from on-prem VMs to EKS; includes DR runbook.", project: "Infrastructure & Cloud", category: "Infrastructure", assignee: "Priya Nair", priority: "High", dueDate: daysFromToday(21), status: "In Progress" },
-    { title: "Patch CVE-2025-XXXX on branch teller VDI", description: "Apply vendor hotfix to the VDI image used by branch tellers and re-baseline.", project: "Cybersecurity Uplift", category: "Cybersecurity", assignee: "Daniel Tan", priority: "Critical", dueDate: daysFromToday(-2), status: "In Progress" },
-    { title: "UAT sign-off for mobile onboarding release 4.2", description: "Collect business sign-off on eKYC flow changes before production cutover.", project: "Digital Channels", category: "Application Development", assignee: "Mei Ling Goh", priority: "High", dueDate: daysFromToday(5), status: "Blocked" },
-    { title: "Define data lineage for regulatory liquidity report", description: "Map source systems to report fields for the monthly liquidity return.", project: "Data & Analytics", category: "Compliance", assignee: "Arjun Mehta", priority: "Medium", dueDate: daysFromToday(30), status: "Backlog" },
-    { title: "Renew core banking vendor support contract", description: "Negotiate the 3-year renewal and confirm SLA credits for P1 incidents.", project: "Vendor Management", category: "Vendor", assignee: "Sarah Lim", priority: "Medium", dueDate: daysFromToday(-6), status: "Blocked" },
-    { title: "Batch interest calculation performance tuning", description: "End-of-day interest batch exceeds window by 40 minutes; profile and tune.", project: "Core Banking Upgrade", category: "Application Development", assignee: "Kenneth Wong", priority: "Critical", dueDate: daysFromToday(10), status: "Backlog" },
-    { title: "Decommission legacy SFTP gateway", description: "All partner file transfers moved to the managed file transfer platform.", project: "Infrastructure & Cloud", category: "Infrastructure", assignee: "Priya Nair", priority: "Low", dueDate: daysFromToday(-12), status: "Done" },
-    { title: "Quarterly privileged access review", description: "Review and attest admin accounts across core banking and payment hubs.", project: "Cybersecurity Uplift", category: "Compliance", assignee: "Daniel Tan", priority: "Low", dueDate: daysFromToday(-1), status: "Done" },
+    { title: "Migrate FX pricing service to AWS", description: "Lift the FX rate pricing engine from on-prem VMs to EKS; includes DR runbook.", project: "Infrastructure & Cloud", category: "Infrastructure", assignee: "Priya Nair", priority: "High", dueDate: daysFromToday(21), status: "In Progress", createdAgo: 26 },
+    { title: "Patch CVE-2025-XXXX on branch teller VDI", description: "Apply vendor hotfix to the VDI image used by branch tellers and re-baseline.", project: "Cybersecurity Uplift", category: "Cybersecurity", assignee: "Daniel Tan", priority: "Critical", dueDate: daysFromToday(-2), status: "In Progress", createdAgo: 9 },
+    { title: "UAT sign-off for mobile onboarding release 4.2", description: "Collect business sign-off on eKYC flow changes before production cutover.", project: "Digital Channels", category: "Application Development", assignee: "Mei Ling Goh", priority: "High", dueDate: daysFromToday(5), status: "Blocked", createdAgo: 28 },
+    { title: "Define data lineage for regulatory liquidity report", description: "Map source systems to report fields for the monthly liquidity return.", project: "Data & Analytics", category: "Compliance", assignee: "Arjun Mehta", priority: "Medium", dueDate: daysFromToday(30), status: "Backlog", createdAgo: 5 },
+    { title: "Renew core banking vendor support contract", description: "Negotiate the 3-year renewal and confirm SLA credits for P1 incidents.", project: "Vendor Management", category: "Vendor", assignee: "Sarah Lim", priority: "Medium", dueDate: daysFromToday(-6), status: "Blocked", createdAgo: 30 },
+    { title: "Batch interest calculation performance tuning", description: "End-of-day interest batch exceeds window by 40 minutes; profile and tune.", project: "Core Banking Upgrade", category: "Application Development", assignee: "Kenneth Wong", priority: "Critical", dueDate: daysFromToday(10), status: "Backlog", createdAgo: 27 },
+    { title: "Decommission legacy SFTP gateway", description: "All partner file transfers moved to the managed file transfer platform.", project: "Infrastructure & Cloud", category: "Infrastructure", assignee: "Priya Nair", priority: "Low", dueDate: daysFromToday(-12), status: "Done", createdAgo: 30, doneAgo: 12 },
+    { title: "Quarterly privileged access review", description: "Review and attest admin accounts across core banking and payment hubs.", project: "Cybersecurity Uplift", category: "Compliance", assignee: "Daniel Tan", priority: "Low", dueDate: daysFromToday(-1), status: "Done", createdAgo: 29, doneAgo: 1 },
+    { title: "Rotate TLS certificates on payment gateway", description: "Replace expiring certificates on the card payment gateway and partner APIs.", project: "Cybersecurity Uplift", category: "Cybersecurity", assignee: "Daniel Tan", priority: "High", dueDate: daysFromToday(-14), status: "Done", createdAgo: 28, doneAgo: 16 },
+    { title: "Archive 2019 loan documents to cold storage", description: "Move closed loan files past retention review to the archive tier.", project: "Data & Analytics", category: "Data", assignee: "Arjun Mehta", priority: "Low", dueDate: daysFromToday(-7), status: "Done", createdAgo: 30, doneAgo: 9 },
+    { title: "Upgrade internet banking load balancers", description: "Firmware upgrade and failover test on the internet banking load balancer pair.", project: "Infrastructure & Cloud", category: "Infrastructure", assignee: "Kenneth Wong", priority: "Medium", dueDate: daysFromToday(-3), status: "Done", createdAgo: 27, doneAgo: 5 },
+    { title: "Close audit finding on change approvals", description: "Evidence that every production change has a recorded CAB approval.", project: "Core Banking Upgrade", category: "Compliance", assignee: "Sarah Lim", priority: "High", dueDate: daysFromToday(-2), status: "Done", createdAgo: 26, doneAgo: 3 },
   ];
-  state.tasks = seed.map((t) => ({ ...t, id: generateTaskId(), pendingDelete: false }));
+  state.tasks = seed.map(({ createdAgo, doneAgo, ...t }) => ({
+    ...t,
+    id: generateTaskId(),
+    createdAt: daysFromToday(-createdAgo),
+    completedAt: doneAgo === undefined ? null : daysFromToday(-doneAgo),
+    pendingDelete: false,
+  }));
 }
 
 /* ============================================================
@@ -896,6 +1169,7 @@ function renderSummary() {
 function renderCard(task) {
   const id = escapeHtml(task.id);
   const title = escapeHtml(task.title);
+  const due = dueInfo(task);
   const moveOptions = STATUSES
     .filter((s) => s.key !== task.status)
     .map((s) => `<option value="${escapeHtml(s.key)}">${escapeHtml(s.key)}</option>`)
@@ -911,20 +1185,26 @@ function renderCard(task) {
 
   return `
     <li class="card" draggable="true" tabindex="-1" data-id="${id}" data-priority="${escapeHtml(task.priority)}"
-        aria-label="${id}: ${title}">
+        data-status="${escapeHtml(task.status)}" aria-label="${id}: ${title}">
       <div class="card-top">
+        <span class="pill pill-${escapeHtml(task.priority)}">${priorityBars(task.priority)}${escapeHtml(task.priority)}</span>
         <span class="task-id">${id}</span>
-        ${isOverdue(task) ? '<span class="overdue">Overdue</span>' : ""}
       </div>
       <h3 class="card-title">${title}</h3>
-      <dl class="card-meta">
-        <dt>Project</dt><dd>${escapeHtml(task.project)}</dd>
-        <dt>Assignee</dt><dd>${escapeHtml(task.assignee)}</dd>
-        <dt>Due</dt><dd><time datetime="${escapeHtml(task.dueDate)}">${escapeHtml(formatDate(task.dueDate))}</time></dd>
-      </dl>
-      <div class="card-tags">
-        <span class="pill pill-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>
-        <span class="tag">${escapeHtml(task.category)}</span>
+      ${task.description ? `<p class="card-desc">${escapeHtml(task.description)}</p>` : ""}
+      <div class="card-context">
+        <span class="card-project"><span class="visually-hidden">Project:</span>${ICONS.folder}${escapeHtml(task.project)}</span>
+        <span class="tag"><span class="visually-hidden">Category:</span>${escapeHtml(task.category)}</span>
+      </div>
+      <div class="card-footer">
+        <span class="assignee">
+          <span class="avatar" data-tone="${avatarTone(task.assignee)}" aria-hidden="true">${escapeHtml(initials(task.assignee))}</span>
+          <span class="visually-hidden">Assignee:</span><span class="assignee-name">${escapeHtml(task.assignee)}</span>
+        </span>
+        <span class="due${due.tone ? " due-" + due.tone : ""}" title="Due ${escapeHtml(formatDate(task.dueDate))}">
+          ${due.icon}<span class="visually-hidden">Due:</span>
+          <time datetime="${escapeHtml(task.dueDate)}">${escapeHtml(due.label)}</time>
+        </span>
       </div>
       <div class="card-actions">
         <select class="move-select" data-action="move" data-id="${id}" aria-label="Move ${id} to another column">
@@ -963,6 +1243,7 @@ function renderBoard() {
     ? `Showing ${visible.length} of ${state.tasks.length} tasks`
     : "";
   renderSummary();
+  renderInsights();
 }
 
 function focusInCard(id, selector) {
@@ -970,6 +1251,316 @@ function focusInCard(id, selector) {
   if (!card) return;
   const target = selector ? card.querySelector(selector) : card;
   (target || card).focus();
+}
+
+/* ============================================================
+   Burn-down insights: derived from task history, scoped by filters
+   ============================================================ */
+function remainingOn(tasks, iso) {
+  return tasks.filter((t) => t.createdAt <= iso && !(t.completedAt && t.completedAt <= iso)).length;
+}
+
+function buildBurndown(tasks) {
+  const days = [];
+  for (let i = -BURNDOWN_PAST_DAYS; i <= BURNDOWN_AHEAD_DAYS; i++) days.push(daysFromToday(i));
+  const start = remainingOn(tasks, days[0]);
+  const last = days.length - 1;
+  return days.map((iso, i) => ({
+    iso,
+    remaining: i <= BURNDOWN_PAST_DAYS ? remainingOn(tasks, iso) : null,
+    ideal: start * (1 - i / last),
+  }));
+}
+
+// Seven-day buckets ending today, oldest first.
+function buildWeekly(tasks) {
+  const weeks = [];
+  for (let w = WEEKS_SHOWN - 1; w >= 0; w--) {
+    const start = daysFromToday(-7 * w - 6);
+    const end = daysFromToday(-7 * w);
+    const done = tasks.filter((t) => t.completedAt && t.completedAt >= start && t.completedAt <= end).length;
+    weeks.push({ start, end, done, label: w === 0 ? "This week" : shortDate(start) });
+  }
+  return weeks;
+}
+
+function buildForecast(tasks) {
+  const open = remainingOn(tasks, todayIso());
+  const recent = tasks.filter((t) => t.completedAt && t.completedAt > daysFromToday(-VELOCITY_DAYS)).length;
+  const perDay = recent / VELOCITY_DAYS;
+  const periodEnd = daysFromToday(BURNDOWN_AHEAD_DAYS);
+  const finish = open && perDay ? daysFromToday(Math.ceil(open / perDay)) : null;
+  return { open, recent, perWeek: perDay * 7, periodEnd, finish, onTrack: !open || (finish !== null && finish <= periodEnd) };
+}
+
+// Ideal values are exact for plotting; show them to one decimal.
+function fmtIdeal(v) {
+  return String(Math.round(v * 10) / 10);
+}
+
+function niceMax(value) {
+  const step = value <= 5 ? 1 : value <= 10 ? 2 : value <= 25 ? 5 : 10;
+  return { top: Math.max(step, Math.ceil(value / step) * step), step };
+}
+
+function burndownSvg(data, width) {
+  const H = 220, L = 30, R = 64, T = 18, B = 28;
+  const n = data.length;
+  const todayIdx = BURNDOWN_PAST_DAYS;
+  const maxVal = Math.max(1, ...data.map((d) => Math.max(d.remaining ?? 0, d.ideal)));
+  const { top, step } = niceMax(maxVal);
+  const x = (i) => L + (i * (width - L - R)) / (n - 1);
+  const y = (v) => T + (1 - v / top) * (H - T - B);
+  const pts = (key) => data.map((d, i) => (d[key] === null ? null : `${x(i).toFixed(1)},${y(d[key]).toFixed(1)}`)).filter(Boolean);
+
+  const grid = [];
+  for (let v = 0; v <= top; v += step) {
+    grid.push(`<line class="${v === 0 ? "axis-line" : "grid-line"}" x1="${L}" x2="${width - R}" y1="${y(v)}" y2="${y(v)}"/>`);
+    grid.push(`<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`);
+  }
+  const actual = pts("remaining");
+  const area = `${x(0)},${y(0)} ${actual.join(" ")} ${x(todayIdx)},${y(0)}`;
+  const nowVal = data[todayIdx].remaining;
+  const endIdeal = data[n - 1];
+
+  chartModel.burndown = { data, x, L, R, width };
+  return `
+    <svg id="bd-svg" viewBox="0 0 ${width} ${H}" height="${H}" tabindex="0" role="group"
+         aria-label="Burn-down chart: ${nowVal} tasks remaining today. Use left and right arrow keys to read each day."
+         aria-describedby="bd-table-caption">
+      ${grid.join("")}
+      <line class="today-line" x1="${x(todayIdx)}" x2="${x(todayIdx)}" y1="${T - 6}" y2="${y(0)}"/>
+      <text x="${x(todayIdx)}" y="${T - 9}" text-anchor="middle" class="label-strong">Today</text>
+      <polygon class="area-actual" points="${area}"/>
+      <polyline class="line-ideal" points="${pts("ideal").join(" ")}"/>
+      <polyline class="line-actual" points="${actual.join(" ")}"/>
+      <circle class="dot-actual" cx="${x(todayIdx)}" cy="${y(nowVal)}" r="4.5"/>
+      <text x="${x(todayIdx) + 9}" y="${y(nowVal) - 8}" class="label-strong">${nowVal} open</text>
+      <text x="${x(n - 1) + 6}" y="${y(endIdeal.ideal) + 4}">Ideal 0</text>
+      <text x="${x(0)}" y="${H - 8}" text-anchor="start">${escapeHtml(shortDate(data[0].iso))}</text>
+      <text x="${x(n - 1)}" y="${H - 8}" text-anchor="end">${escapeHtml(shortDate(endIdeal.iso))}</text>
+      <line class="xhair" id="bd-xhair" x1="0" x2="0" y1="${T}" y2="${y(0)}" visibility="hidden"/>
+      <rect class="hit" id="bd-hit" x="${L}" y="${T}" width="${width - L - R}" height="${y(0) - T}"/>
+    </svg>`;
+}
+
+function weeklySvg(weeks, width) {
+  const H = 220, L = 8, R = 8, T = 22, B = 28;
+  const band = (width - L - R) / weeks.length;
+  const barW = Math.min(24, band * 0.6);
+  const top = Math.max(1, ...weeks.map((w) => w.done));
+  const y = (v) => T + (1 - v / top) * (H - T - B);
+  const base = y(0);
+  const bars = weeks.map((w, i) => {
+    const cx = L + band * i + band / 2;
+    const x0 = cx - barW / 2;
+    const yTop = y(w.done);
+    const r = Math.min(4, (base - yTop) / 2);
+    // 4px rounded data-end, square at the baseline
+    const shape = w.done
+      ? `<path class="bar" d="M${x0},${base} V${yTop + r} Q${x0},${yTop} ${x0 + r},${yTop} H${x0 + barW - r} Q${x0 + barW},${yTop} ${x0 + barW},${yTop + r} V${base} Z"/>`
+      : "";
+    return `
+      <rect class="bar-hit" x="${L + band * i}" y="${T - 18}" width="${band}" height="${base - T + 18}" tabindex="0" data-week="${i}"
+            aria-label="Week starting ${escapeHtml(formatDate(w.start))}: ${w.done} completed"/>
+      ${shape}
+      <text x="${cx}" y="${yTop - 6}" text-anchor="middle" class="label-strong">${w.done}</text>
+      <text x="${cx}" y="${H - 8}" text-anchor="middle">${escapeHtml(w.label)}</text>`;
+  }).join("");
+  chartModel.weekly = { weeks, band, L };
+  return `
+    <svg viewBox="0 0 ${width} ${H}" height="${H}" role="group" aria-label="Tasks completed per week">
+      <line class="axis-line" x1="${L}" x2="${width - R}" y1="${base}" y2="${base}"/>
+      ${bars}
+    </svg>`;
+}
+
+function renderInsights(isRefit) {
+  const body = document.getElementById("insights-body");
+  const showing = state.view === "insights";
+  document.querySelector(".insights").hidden = !showing;
+  document.getElementById("board").hidden = showing;
+  document.querySelectorAll(".view-btn").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === state.view)));
+  const tasks = applyFilters(state.tasks);
+  const filtered = tasks.length !== state.tasks.length;
+  document.getElementById("insights-scope").textContent =
+    `${filtered ? `Filtered: ${tasks.length} of ${state.tasks.length} tasks` : "All tasks"} · ${shortDate(daysFromToday(-BURNDOWN_PAST_DAYS))} – ${shortDate(daysFromToday(BURNDOWN_AHEAD_DAYS))}`;
+  if (!showing) return;
+
+  const burndown = buildBurndown(tasks);
+  const weekly = buildWeekly(tasks);
+  const fc = buildForecast(tasks);
+  const statusChip = fc.onTrack
+    ? `<span class="stat-chip good">${ICONS.check}On track</span>`
+    : `<span class="stat-chip bad">${ICONS.alert}Behind</span>`;
+  const finishText = !fc.open ? "Done" : fc.finish ? shortDate(fc.finish) : "No pace yet";
+
+  // Measure before rewriting, so the SVGs match the space they get.
+  const prevBd = body.querySelector("#bd-box");
+  const prevWk = body.querySelector("#wk-box");
+  const fallback = Math.max(240, body.clientWidth || 600);
+  const bdWidth = Math.round(prevBd ? prevBd.clientWidth : fallback * 0.64);
+  const wkWidth = Math.round(prevWk ? prevWk.clientWidth : fallback * 0.32);
+
+  chartModel = {};
+  const dayRows = burndown.map((d) => `<tr><td>${escapeHtml(shortDate(d.iso))}</td><td class="num">${d.remaining ?? "–"}</td><td class="num">${fmtIdeal(d.ideal)}</td></tr>`).join("");
+  const weekRows = weekly.map((w) => `<tr><td>${escapeHtml(shortDate(w.start))} – ${escapeHtml(shortDate(w.end))}</td><td class="num">${w.done}</td></tr>`).join("");
+
+  body.innerHTML = `
+    <div class="stat-row">
+      <div class="stat"><p class="stat-label">Open now</p><p class="stat-value">${fc.open}</p><p class="stat-sub">Ideal today: ${fmtIdeal(burndown[BURNDOWN_PAST_DAYS].ideal)}</p></div>
+      <div class="stat"><p class="stat-label">Completed, last ${VELOCITY_DAYS} days</p><p class="stat-value">${fc.recent}</p><p class="stat-sub">${fc.perWeek.toFixed(1)} per week</p></div>
+      <div class="stat"><p class="stat-label">Projected finish</p><p class="stat-value">${escapeHtml(finishText)}</p><p class="stat-sub">${statusChip}</p></div>
+      <div class="stat"><p class="stat-label">Period ends</p><p class="stat-value">${escapeHtml(shortDate(fc.periodEnd))}</p><p class="stat-sub">${BURNDOWN_AHEAD_DAYS} days left</p></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Remaining tasks</h3>
+        <ul class="legend" aria-hidden="true">
+          <li><span class="key key-actual"></span>Remaining</li>
+          <li><span class="key key-ideal"></span>Ideal</li>
+        </ul>
+        <div class="chart-box" id="bd-box">
+          ${burndownSvg(burndown, bdWidth)}
+          <div class="chart-tip" id="bd-tip" hidden></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Completed per week</h3>
+        <p class="chart-sub">Seven-day buckets ending today</p>
+        <div class="chart-box" id="wk-box">
+          ${weeklySvg(weekly, wkWidth)}
+          <div class="chart-tip" id="wk-tip" hidden></div>
+        </div>
+      </div>
+    </div>
+    <details class="chart-table">
+      <summary>Show data table</summary>
+      <div class="tables">
+        <table><caption id="bd-table-caption">Remaining tasks by day</caption>
+          <thead><tr><th scope="col">Day</th><th scope="col" class="num">Remaining</th><th scope="col" class="num">Ideal</th></tr></thead>
+          <tbody>${dayRows}</tbody></table>
+        <table><caption>Completed per week</caption>
+          <thead><tr><th scope="col">Week</th><th scope="col" class="num">Completed</th></tr></thead>
+          <tbody>${weekRows}</tbody></table>
+      </div>
+    </details>`;
+  // First paint guesses the widths; redraw once at the real ones.
+  const fit = (id, used) => Math.abs(body.querySelector(id).clientWidth - used) > 2;
+  if (isRefit !== true && (fit("#bd-box", bdWidth) || fit("#wk-box", wkWidth))) renderInsights(true);
+}
+
+// Tooltip rows are built with textContent: labels never go through innerHTML.
+function showTip(tip, title, rows, left, boxWidth) {
+  tip.replaceChildren();
+  const head = document.createElement("p");
+  head.className = "tip-title";
+  head.textContent = title;
+  tip.appendChild(head);
+  rows.forEach(([value, label, keyClass]) => {
+    const row = document.createElement("div");
+    row.className = "tip-row";
+    if (keyClass) {
+      const key = document.createElement("span");
+      key.className = `key ${keyClass}`;
+      row.appendChild(key);
+    }
+    const strong = document.createElement("strong");
+    strong.textContent = value;
+    row.append(strong, document.createTextNode(label));
+    tip.appendChild(row);
+  });
+  tip.hidden = false;
+  const half = tip.offsetWidth / 2;
+  tip.style.left = `${Math.min(Math.max(left, half), boxWidth - half)}px`;
+}
+
+function showBurndownAt(i) {
+  const m = chartModel && chartModel.burndown;
+  if (!m) return;
+  i = Math.max(0, Math.min(m.data.length - 1, i));
+  m.active = i;
+  const d = m.data[i];
+  const xh = document.getElementById("bd-xhair");
+  xh.setAttribute("x1", m.x(i));
+  xh.setAttribute("x2", m.x(i));
+  xh.setAttribute("visibility", "visible");
+  const rows = [];
+  if (d.remaining !== null) rows.push([String(d.remaining), " remaining", "key-actual"]);
+  rows.push([fmtIdeal(d.ideal), " ideal", "key-ideal"]);
+  const box = document.getElementById("bd-box");
+  showTip(document.getElementById("bd-tip"), i === BURNDOWN_PAST_DAYS ? `Today, ${formatDate(d.iso)}` : formatDate(d.iso), rows, m.x(i), box.clientWidth);
+}
+
+function hideBurndownTip() {
+  const xh = document.getElementById("bd-xhair");
+  const tip = document.getElementById("bd-tip");
+  if (xh) xh.setAttribute("visibility", "hidden");
+  if (tip) tip.hidden = true;
+  if (chartModel && chartModel.burndown) chartModel.burndown.active = null;
+}
+
+function showWeekTip(i) {
+  const m = chartModel && chartModel.weekly;
+  if (!m) return;
+  const w = m.weeks[i];
+  const box = document.getElementById("wk-box");
+  showTip(document.getElementById("wk-tip"), `${shortDate(w.start)} – ${shortDate(w.end)}`, [[String(w.done), " completed", "key-actual"]], m.L + m.band * i + m.band / 2, box.clientWidth);
+}
+
+function bindInsightEvents() {
+  const panel = document.getElementById("insights-body");
+
+  document.querySelector(".view-switch").addEventListener("click", (e) => {
+    const btn = e.target.closest(".view-btn");
+    if (!btn || btn.dataset.view === state.view) return;
+    state.view = btn.dataset.view;
+    renderInsights();
+  });
+
+  panel.addEventListener("pointermove", (e) => {
+    if (e.target.id !== "bd-hit") return;
+    const m = chartModel.burndown;
+    const rect = document.getElementById("bd-svg").getBoundingClientRect();
+    const px = ((e.clientX - rect.left) / rect.width) * m.width;
+    showBurndownAt(Math.round(((px - m.L) / (m.width - m.L - m.R)) * (m.data.length - 1)));
+  });
+  panel.addEventListener("pointerout", (e) => {
+    if (e.target.id === "bd-hit") hideBurndownTip();
+    if (e.target.classList.contains("bar-hit")) document.getElementById("wk-tip").hidden = true;
+  });
+  panel.addEventListener("pointerover", (e) => {
+    if (e.target.classList.contains("bar-hit")) showWeekTip(Number(e.target.dataset.week));
+  });
+
+  // Keyboard: the burn-down reads day by day with the arrow keys; bars on focus.
+  panel.addEventListener("focusin", (e) => {
+    if (e.target.id === "bd-svg") showBurndownAt(BURNDOWN_PAST_DAYS);
+    if (e.target.classList.contains("bar-hit")) showWeekTip(Number(e.target.dataset.week));
+  });
+  panel.addEventListener("focusout", (e) => {
+    if (e.target.id === "bd-svg") hideBurndownTip();
+    if (e.target.classList.contains("bar-hit")) document.getElementById("wk-tip").hidden = true;
+  });
+  panel.addEventListener("keydown", (e) => {
+    if (e.target.id !== "bd-svg") return;
+    const m = chartModel.burndown;
+    const moves = { ArrowLeft: -1, ArrowRight: 1, Home: -Infinity, End: Infinity };
+    if (!(e.key in moves)) return;
+    e.preventDefault();
+    const cur = m.active ?? BURNDOWN_PAST_DAYS;
+    showBurndownAt(Number.isFinite(moves[e.key]) ? cur + moves[e.key] : moves[e.key] < 0 ? 0 : m.data.length - 1);
+  });
+
+  // Re-render at the new width when the panel resizes (one frame at a time).
+  let frame = 0;
+  let lastWidth = panel.clientWidth;
+  new ResizeObserver(() => {
+    if (panel.clientWidth === lastWidth) return;
+    lastWidth = panel.clientWidth;
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(renderInsights);
+  }).observe(panel);
 }
 
 /* ============================================================
@@ -1000,7 +1591,13 @@ function toggleTheme() {
    Mutations: every change goes through state, then re-renders
    ============================================================ */
 function addTask(fields) {
-  const task = { ...fields, id: generateTaskId(), pendingDelete: false };
+  const task = {
+    ...fields,
+    id: generateTaskId(),
+    createdAt: todayIso(),
+    completedAt: fields.status === "Done" ? todayIso() : null,
+    pendingDelete: false,
+  };
   state.tasks.push(task);
   renderBoard();
   return task;
@@ -1010,6 +1607,7 @@ function moveTask(id, status) {
   const task = findTask(id);
   if (!task || task.status === status || !STATUSES.some((s) => s.key === status)) return false;
   task.status = status;
+  task.completedAt = status === "Done" ? todayIso() : null;
   task.pendingDelete = false;
   renderBoard();
   return true;
@@ -1353,6 +1951,7 @@ function init() {
   bindFilterEvents();
   bindHeaderEvents();
   bindInfoEvents();
+  bindInsightEvents();
   applyTheme();
 
   seedTasks();

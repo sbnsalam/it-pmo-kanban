@@ -31,6 +31,10 @@ The board starts with seed tasks. Their due dates are set relative to today, so 
 - **Filters** by project, assignee (text match) and priority.
 - **Overdue highlighting:** a task is overdue when its due date has passed and it isn't Done.
 - **Header summary** of totals across all tasks, ignoring filters.
+- **Cards** show a priority pill with signal bars, a two-line description, project and category, an assignee avatar, and a due chip that reads "Due tomorrow" / "3 days overdue" (amber within 3 days, red when overdue).
+- **Full-screen board:** on screens 1024px and wider the board fills the window under the header and each column scrolls on its own.
+- **Icon buttons** for Help, FAQ, About and Add Task (icon-only for Help / FAQ / About on phones, with accessible names).
+- **Burn-down view** (switch with **Board / Burn-down** next to the filters): open tasks vs. an ideal line over a 21-days-back / 14-days-ahead period, tasks completed per week, and stat tiles for pace and projected finish (On track / Behind). Charts follow the filters, have hover and keyboard tooltips, and a data-table view.
 - **Light and dark themes:** follows the system setting; the sun / moon button in the header switches it until the next refresh.
 - **Help, FAQ and About** in one modal guide opened from the header. Press `?` to open Help.
 - **Responsive:** the board goes two-up below 1200px and stacks into one column below 768px.
@@ -71,6 +75,10 @@ These constants sit at the top of the script:
 | `APP_VERSION` | `2.0` | Shown on the About tab |
 | `TASK_ID_PREFIX` | `ITPM-` | Prefix for generated task IDs |
 | `TOAST_MS` | `4500` | How long toast messages stay up, in milliseconds |
+| `BURNDOWN_PAST_DAYS` / `BURNDOWN_AHEAD_DAYS` | `21` / `14` | Burn-down period: start before today, end (ideal hits zero) after today |
+| `VELOCITY_DAYS` | `14` | Completions in this window set the pace for the projected finish |
+| `WEEKS_SHOWN` | `5` | Bars in the completed-per-week chart |
+| `DUE_SOON_DAYS` | `3` | Open tasks due within this many days get an amber chip |
 
 ## Design constraints
 
