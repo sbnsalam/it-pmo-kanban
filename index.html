@@ -577,6 +577,22 @@
     from { opacity: 0; transform: translateY(8px) scale(0.98); }
     to   { opacity: 1; transform: none; }
   }
+  /* "Back to work" nudge: a small modal shown once, after 10s on the page */
+  .nudge-dialog {
+    width: min(360px, calc(100vw - 2 * var(--space-4)));
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .nudge-dialog[open] { animation: dialog-in var(--dur) var(--ease-out); }
+  .nudge-dialog::backdrop { background: var(--scrim); }
+  .nudge-dialog h2 { margin: 0 0 var(--space-4); font-size: 20px; color: var(--heading); }
+  .nudge-dialog form { display: flex; justify-content: center; }
+
   .info-head {
     display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
     padding: var(--space-4) var(--space-5) 0;
@@ -952,6 +968,16 @@
   </section>
 </dialog>
 
+<!-- ============================================================
+     "Back to work" nudge (opened by startIdleNudge after 10s)
+     ============================================================ -->
+<dialog class="nudge-dialog" id="nudge-dialog" aria-labelledby="nudge-title">
+  <h2 id="nudge-title">Stop dreaming and back to work!!</h2>
+  <form method="dialog">
+    <button type="submit" class="btn btn-primary" autofocus>Back to work</button>
+  </form>
+</dialog>
+
 <!-- Toast region: announces success / warning messages to assistive tech -->
 <div class="toast-region" id="toasts" aria-live="polite" aria-atomic="false"></div>
 
@@ -974,6 +1000,7 @@ const APP_NAME = "Throughline";
 const APP_VERSION = "2.0";
 const TASK_ID_PREFIX = "ITPM-";
 const TOAST_MS = 4500;
+const NUDGE_MS = 10000;         // time on the page before the "back to work" nudge
 const BURNDOWN_PAST_DAYS = 21;  // period starts this many days before today
 const BURNDOWN_AHEAD_DAYS = 14; // period ends (ideal line hits zero) this many days after today
 const VELOCITY_DAYS = 14;       // completions in this window set the pace for the projected finish
@@ -1930,6 +1957,22 @@ function bindInfoEvents() {
 }
 
 /* ============================================================
+   "Back to work" nudge: shown once per page load, after NUDGE_MS
+   with the tab visible. Waits for any open dialog to close first.
+   ============================================================ */
+function startIdleNudge() {
+  const TICK_MS = 1000;
+  let visibleMs = 0;
+  const timer = setInterval(() => {
+    if (document.hidden) return;
+    visibleMs += TICK_MS;
+    if (visibleMs < NUDGE_MS || document.querySelector("dialog[open]")) return;
+    clearInterval(timer);
+    document.getElementById("nudge-dialog").showModal();
+  }, TICK_MS);
+}
+
+/* ============================================================
    Init
    ============================================================ */
 function init() {
@@ -1957,6 +2000,7 @@ function init() {
 
   seedTasks();
   renderBoard();
+  startIdleNudge();
 }
 
 document.addEventListener("DOMContentLoaded", init);
