@@ -11,7 +11,7 @@ A single-file IT PMO Kanban board (`index.html`) for a fictitious bank's interna
 - **One file:** all markup, one `<style>` block and one `<script>` block live in `index.html`. Vanilla HTML/CSS/JS only: no frameworks, build step, npm, CDN scripts, web fonts or image files. Icons are Unicode or inline SVG; fonts are a system stack.
 - **Opens by double-click** (`file://`), so no server is needed.
 - **No persistence.** No localStorage, sessionStorage, IndexedDB or cookies. A refresh resets the board to seed data; the header note says so.
-- **One network call:** `notifyNewTask()` posts JSON to FormSubmit's AJAX endpoint. Nothing else leaves the page.
+- **One network call:** `notifyNewTask()` posts JSON to FormSubmit's AJAX endpoint. Nothing else leaves the page. The chat widget's **Chat on WhatsApp** is a plain link (`WHATSAPP_URL`, new tab), not a request.
 - No `alert()`/`confirm()` (delete uses an inline "Delete? Yes / No" toggle), and no `!important`.
 
 ## Commands
@@ -26,7 +26,7 @@ sed -n '/<script>/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/k.js && node -
 grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important|https?://' index.html
 ```
 
-The grep should only match the `FORMSUBMIT_ENDPOINT` line.
+The grep should only match the `FORMSUBMIT_ENDPOINT` and `WHATSAPP_URL` lines.
 
 ## Architecture
 
@@ -41,4 +41,5 @@ The grep should only match the `FORMSUBMIT_ENDPOINT` line.
 - **Dates** are compared as local `YYYY-MM-DD` strings (`toIsoDate`, `todayIso`). Seed due dates are relative to today (`daysFromToday`), so some seed tasks are always overdue. Overdue = due date before today and status ≠ Done.
 - **Layout:** at 1024px and up the page is a full-height app shell (`body` is `100dvh`, flex column): the board takes the remaining height and each `.card-list` scrolls. Below that the page scrolls normally. `state.view` (`insights` by default, or `board`) picks which of `#board` and `.insights` is shown, set by the `.view-switch` buttons. The main area (filters + board) takes the full width; the board is 4-up, 2-up below 1024px and 1-up below 768px. The Add Task form lives in a right-hand drawer, a modal `<dialog>` (`#task-drawer`) opened by `openTaskDrawer()` from "+ Add Task" and closed by `closeTaskDrawer()` after a successful add, the × button, Esc or a backdrop click. Colours and spacing are tokens on `:root`; card left borders and priority pills are keyed by `data-priority` / `.pill-<Priority>`.
 - **Theming:** every colour token uses `light-dark()`, driven by `color-scheme`. `applyTheme()` sets `data-theme` on `<html>` only after the user toggles; a refresh goes back to the OS setting. Add new colours as `light-dark(light, dark)` tokens, never raw hex in rules.
+- **Chat widget:** a fixed button at the bottom right (`.chat-widget`; toasts sit above it). `bindChatWidget()` fills the greeting, link and number from `WHATSAPP_NUMBER` / `WHATSAPP_URL` / `CHAT_GREETING`; `setChatOpen()` toggles the panel and calls `speak()` (Web Speech API, skipped when unsupported) on open. Esc or × closes it and returns focus to the button.
 - **Help / FAQ / About** is one native `<dialog>` (`#info-dialog`) with an ARIA tablist; `openInfo(tab)` opens it, `?` opens Help, and a backdrop click or Esc closes it. Inline SVGs omit `xmlns` so the URL grep stays clean.

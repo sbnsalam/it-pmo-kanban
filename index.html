@@ -86,6 +86,10 @@
     --focus-on-header: #f5a623;
     /* Form-field edges: >= 3:1 against the field and its panel */
     --field-line: light-dark(#7d8a9c, #64758f);
+    /* Chat widget (WhatsApp green): white 5.3:1 / dark ink 9.4:1 */
+    --chat-bg:  light-dark(#0b7a55, #25d366);
+    --chat-ink: light-dark(#ffffff, #0b1220);
+    --chat-fab: 56px;
     --scrim: rgba(4, 10, 20, 0.55);
 
     --space-1: 4px;
@@ -681,12 +685,50 @@
   .facts dd { margin: 0; }
 
   /* ============================================================
+     Chat widget: floating button (bottom right) + greeting panel
+     linking to WhatsApp
+     ============================================================ */
+  .chat-widget { position: fixed; right: var(--space-4); bottom: var(--space-4); z-index: 15; }
+  .chat-fab {
+    display: grid; place-items: center;
+    width: var(--chat-fab); height: var(--chat-fab);
+    border: 0; border-radius: 50%;
+    background: var(--chat-bg); color: var(--chat-ink);
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .chat-fab:hover { transform: scale(1.06); }
+  .chat-fab svg.icon { width: 26px; height: 26px; }
+  .chat-panel {
+    position: absolute; right: 0; bottom: calc(var(--chat-fab) + var(--space-3));
+    width: min(320px, calc(100vw - 2 * var(--space-4)));
+    padding: var(--space-4);
+    background: var(--surface); color: var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    animation: dialog-in var(--dur) var(--ease-out);
+  }
+  .chat-panel[hidden] { display: none; }
+  .chat-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-3); }
+  .chat-head h2 { margin: 0; font-size: var(--text-base); color: var(--heading); }
+  .chat-close { color: var(--ink-soft); }
+  .chat-close:hover { background: var(--surface-2); color: var(--ink); }
+  .chat-bubble {
+    margin: 0 0 var(--space-4); padding: var(--space-2) var(--space-3);
+    background: var(--surface-2); border-radius: var(--radius) var(--radius) var(--radius) 2px;
+    width: fit-content; max-width: 100%;
+  }
+  .chat-cta { width: 100%; background: var(--chat-bg); color: var(--chat-ink); text-decoration: none; }
+  .chat-cta:hover { filter: brightness(1.08); }
+  .chat-note { margin: var(--space-2) 0 0; font-size: var(--text-xs); color: var(--ink-soft); text-align: center; }
+
+  /* ============================================================
      Toasts
      ============================================================ */
   .toast-region {
     position: fixed;
     right: var(--space-4);
-    bottom: var(--space-4);
+    bottom: calc(var(--space-4) + var(--chat-fab) + var(--space-3)); /* above the chat button */
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
@@ -927,6 +969,7 @@
       <li><strong>Delete a task</strong> with the <strong>×</strong> on its card, then confirm with <strong>Yes</strong>. Choose <strong>No</strong> to keep it.</li>
       <li><strong>Filter the board</strong> by project, assignee or priority. Column counts show filtered tasks; the header chips always count everything.</li>
       <li><strong>See progress</strong> on <strong>Burn-down</strong>, the view the page opens on: open tasks against an ideal line, weekly completions and a projected finish. <strong>Board</strong>, next to it above the filters, shows the Kanban columns.</li>
+      <li><strong>Get help</strong> with the green chat button at the bottom right. It greets you out loud and links to WhatsApp.</li>
       <li><strong>Switch theme</strong> with the sun / moon button. The board follows your system setting until you choose.</li>
     </ol>
     <h3>Columns</h3>
@@ -957,7 +1000,11 @@
     </details>
     <details>
       <summary>Who gets an email when I add a task?</summary>
-      <p>Each new task sends one notification through FormSubmit to the address set in <code>FORMSUBMIT_ENDPOINT</code> at the top of the script. It's the only thing that leaves the page.</p>
+      <p>Each new task sends one notification through FormSubmit to the address set in <code>FORMSUBMIT_ENDPOINT</code> at the top of the script. It's the only data the page sends anywhere.</p>
+    </details>
+    <details>
+      <summary>What does the chat button do?</summary>
+      <p>It says "How can I help you?" out loud (if your browser supports speech) and opens a small panel. <strong>Chat on WhatsApp</strong> opens a WhatsApp conversation with the support number in a new tab; the board itself sends nothing.</p>
     </details>
     <details>
       <summary>Why didn't the notification email arrive?</summary>
@@ -1005,7 +1052,7 @@
       <dt>Version</dt><dd id="about-version"></dd>
       <dt>Built with</dt><dd>One HTML file: plain HTML, CSS and JavaScript, no build step</dd>
       <dt>Data</dt><dd>In memory only; resets on refresh</dd>
-      <dt>Network</dt><dd>One call per new task, to FormSubmit</dd>
+      <dt>Network</dt><dd>One call per new task, to FormSubmit. The chat button's WhatsApp link opens in a new tab.</dd>
       <dt>Themes</dt><dd>Light and dark, following your system by default</dd>
     </dl>
   </section>
@@ -1020,6 +1067,23 @@
     <button type="submit" class="btn btn-primary" autofocus>Back to work</button>
   </form>
 </dialog>
+
+<!-- ============================================================
+     Chat widget (bindChatWidget): the button speaks a greeting and
+     opens a panel whose link continues the chat on WhatsApp
+     ============================================================ -->
+<div class="chat-widget">
+  <section class="chat-panel" id="chat-panel" aria-labelledby="chat-title" hidden>
+    <div class="chat-head">
+      <h2 id="chat-title">Throughline support</h2>
+      <button type="button" class="icon-btn chat-close" id="chat-close" aria-label="Close chat"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
+    </div>
+    <p class="chat-bubble" id="chat-greeting"></p>
+    <a class="btn chat-cta" id="chat-link" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></g></svg>Chat on WhatsApp</a>
+    <p class="chat-note" id="chat-note"></p>
+  </section>
+  <button type="button" class="chat-fab" id="chat-toggle" aria-expanded="false" aria-controls="chat-panel" aria-label="Open chat" title="Chat with us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></g></svg></button>
+</div>
 
 <!-- Toast region: announces success / warning messages to assistive tech -->
 <div class="toast-region" id="toasts" aria-live="polite" aria-atomic="false"></div>
@@ -1043,6 +1107,9 @@ const APP_NAME = "Throughline";
 const APP_VERSION = "2.0";
 const TASK_ID_PREFIX = "ITPM-";
 const TOAST_MS = 4500;
+const WHATSAPP_NUMBER = "6512345678"; // country code + number, digits only (+65 1234 5678)
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi, I have a question about the IT PMO board.")}`;
+const CHAT_GREETING = "How can I help you?";
 const NUDGE_MS = 10000;         // time on the page before the "back to work" nudge
 const BURNDOWN_PAST_DAYS = 21;  // period starts this many days before today
 const BURNDOWN_AHEAD_DAYS = 14; // period ends (ideal line hits zero) this many days after today
@@ -2054,6 +2121,47 @@ function startIdleNudge() {
 }
 
 /* ============================================================
+   Chat widget: the button speaks the greeting (Web Speech API, when
+   the browser has it) and toggles a panel linking to WhatsApp.
+   The link is a plain navigation in a new tab, not a network call.
+   ============================================================ */
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel(); // don't queue repeats on fast clicks
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en";
+  window.speechSynthesis.speak(utterance);
+}
+
+function setChatOpen(open, { returnFocus = false } = {}) {
+  const panel = document.getElementById("chat-panel");
+  const toggle = document.getElementById("chat-toggle");
+  panel.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  toggle.setAttribute("aria-label", open ? "Close chat" : "Open chat");
+  if (open) {
+    speak(CHAT_GREETING);
+    document.getElementById("chat-link").focus();
+  } else if (returnFocus) {
+    toggle.focus();
+  }
+}
+
+function bindChatWidget() {
+  document.getElementById("chat-greeting").textContent = CHAT_GREETING;
+  document.getElementById("chat-link").href = WHATSAPP_URL;
+  document.getElementById("chat-note").textContent =
+    `Opens WhatsApp (+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 6)} ${WHATSAPP_NUMBER.slice(6)}) in a new tab.`;
+
+  const panel = document.getElementById("chat-panel");
+  document.getElementById("chat-toggle").addEventListener("click", () => setChatOpen(panel.hidden));
+  document.getElementById("chat-close").addEventListener("click", () => setChatOpen(false, { returnFocus: true }));
+  document.querySelector(".chat-widget").addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !panel.hidden) { e.preventDefault(); setChatOpen(false, { returnFocus: true }); }
+  });
+}
+
+/* ============================================================
    Init
    ============================================================ */
 function init() {
@@ -2077,6 +2185,7 @@ function init() {
   bindHeaderEvents();
   bindInfoEvents();
   bindInsightEvents();
+  bindChatWidget();
   applyTheme();
 
   seedTasks();

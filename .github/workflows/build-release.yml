@@ -27,7 +27,7 @@ jobs:
 
       - name: Check constraints (no storage, dialogs, !important or extra URLs)
         run: |
-          hits=$(grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important|https?://' index.html | grep -v 'const FORMSUBMIT_ENDPOINT' || true)
+          hits=$(grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important|https?://' index.html | grep -vE 'const (FORMSUBMIT_ENDPOINT|WHATSAPP_URL)' || true)
           if [ -n "$hits" ]; then
             echo "::error::Constraint violations in index.html:"
             echo "$hits"
