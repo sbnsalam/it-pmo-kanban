@@ -1,0 +1,69 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Syntax-check the script
+        run: |
+          sed -n '/<script>/,/<\/script>/p' index.html | sed '1d;$d' > "$RUNNER_TEMP/k.js"
+          node --check "$RUNNER_TEMP/k.js"
+
+      - name: Check constraints (no storage, dialogs, !important or extra URLs)
+        run: |
+          hits=$(grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important|https?://' index.html | grep -v 'const FORMSUBMIT_ENDPOINT' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Constraint violations in index.html:"
+            echo "$hits"
+            exit 1
+          fi
+
+      - name: Build package
+        run: |
+          mkdir -p dist/it-pmo-kanban
+          cp index.html README.md dist/it-pmo-kanban/
+          cd dist && zip -r it-pmo-kanban.zip it-pmo-kanban
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: it-pmo-kanban
+          path: dist/it-pmo-kanban.zip
+
+  release:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: it-pmo-kanban
+          path: dist
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/it-pmo-kanban.zip index.html \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes
