@@ -24,7 +24,7 @@ The board starts with seed tasks. Their due dates are set relative to today, so 
 ## Features
 
 - **Four columns:** Backlog, In Progress, Blocked, Done. Each column header shows a count of its visible tasks.
-- **Add Task panel** slides in from the right when you click **+ Add Task**, with inline validation. Title, Assignee and Due Date are required. You can also set Description, Project / Workstream, Category, Priority and Status.
+- **Add Task panel** slides in from the right when you click the **+** button at the top right, with inline validation. Title, Assignee and Due Date are required. You can also set Description, Project / Workstream, Category, Priority and Status.
 - **Task IDs** are generated as `ITPM-0001`, `ITPM-0002`, and so on.
 - **Moving tasks:** drag a card to another column, or use the card's **Move ▸** dropdown (keyboard friendly).
 - **Delete** with an inline "Delete? Yes / No" confirmation.
@@ -33,7 +33,7 @@ The board starts with seed tasks. Their due dates are set relative to today, so 
 - **Header summary** of totals across all tasks, ignoring filters.
 - **Cards** show a priority pill with signal bars, a two-line description, project and category, an assignee avatar, and a due chip that reads "Due tomorrow" / "3 days overdue" (amber within 3 days, red when overdue).
 - **Full-screen board:** on screens 1024px and wider the board fills the window under the header and each column scrolls on its own.
-- **Icon buttons** for Help, FAQ, About and Add Task (icon-only for Help / FAQ / About on phones, with accessible names).
+- **Icon buttons:** Add Task is an icon-only **+** button; Help, FAQ and About show an icon plus label (icon-only on phones). All have accessible names and tooltips.
 - **Burn-down view** (switch with **Board / Burn-down** next to the filters): open tasks vs. an ideal line over a 21-days-back / 14-days-ahead period, tasks completed per week, and stat tiles for pace and projected finish (On track / Behind). Charts follow the filters, have hover and keyboard tooltips, and a data-table view.
 - **Light and dark themes:** follows the system setting; the sun / moon button in the header switches it until the next refresh.
 - **Help, FAQ and About** in one modal guide opened from the header. Press `?` to open Help.
