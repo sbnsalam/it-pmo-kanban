@@ -176,6 +176,11 @@
 
   .header-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
   .header-nav { display: flex; gap: var(--space-1); }
+  /* Help / FAQ / About are icon-only; the label stays for screen readers */
+  .header-nav .btn-label {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
   /* Row 1: logo, chips, actions on the right. Row 2: demo note. */
   .demo-note { font-size: 12px; opacity: 0.75; margin: 0; order: 1; flex-basis: 100%; }
 
@@ -347,6 +352,33 @@
   .bar { fill: var(--chart-actual); transition: opacity var(--dur); }
   .bar-hit { fill: transparent; cursor: default; }
   .bar-hit:hover + .bar, .bar-hit:focus + .bar { opacity: 0.75; }
+
+  /* Entry animation: plays once each time the Burn-down view opens.
+     Lines draw left to right (pathLength="1"), the area and today's dot
+     follow, bars grow from the baseline with a short stagger. Under
+     reduced motion the global rule removes the animations and every
+     mark rests in its final state: the rules below only apply when
+     reduced motion is off. */
+  .line-actual, .line-ideal { stroke-dasharray: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .is-plotting .line-ideal  { animation: draw-line 700ms var(--ease-out) both; }
+    .is-plotting .line-actual { animation: draw-line 1000ms var(--ease-out) 150ms both; }
+    .is-plotting .area-actual { animation: fade-in-area 400ms ease-out 800ms both; }
+    .is-plotting .dot-actual,
+    .is-plotting .plot-end    { animation: fade-in 250ms ease-out 1100ms both; }
+    .is-plotting .bar {
+      transform-box: fill-box;
+      transform-origin: bottom;
+      animation: grow-bar 500ms var(--ease-out) calc(200ms + var(--i) * 70ms) both;
+    }
+    .is-plotting .bar-value { animation: fade-in 200ms ease-out calc(600ms + var(--i) * 70ms) both; }
+    .is-plotting .stat { animation: rise-in 300ms var(--ease-out) calc(var(--i) * 50ms) both; }
+  }
+  @keyframes draw-line    { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes fade-in-area { from { opacity: 0; } }
+  @keyframes fade-in      { from { opacity: 0; } }
+  @keyframes grow-bar     { from { transform: scaleY(0); } }
+  @keyframes rise-in      { from { opacity: 0; transform: translateY(6px); } }
 
   .chart-tip {
     position: absolute; top: 0; z-index: 2;
@@ -683,11 +715,6 @@
     .card-list { flex: 1; min-height: 0; overflow-y: auto; padding: 2px 4px 6px 2px; margin: -2px -4px 0 -2px; }
   }
   @media (max-width: 767px) {
-    .header-nav .btn-label {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-    }
-    .header-nav .btn { width: 44px; padding: var(--space-2); }
     .view-btn { min-height: 44px; }
     .header-actions { margin-left: 0; }
   }
@@ -722,9 +749,9 @@
   <ul class="summary" id="summary" aria-label="Board summary"></ul>
   <div class="header-actions">
     <nav class="header-nav" aria-label="Help and information">
-      <button type="button" class="btn btn-header" data-info="help" aria-haspopup="dialog" title="Help"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.5v.01"/></g></svg><span class="btn-label">Help</span></button>
-      <button type="button" class="btn btn-header" data-info="faq" aria-haspopup="dialog" title="FAQ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></g></svg><span class="btn-label">FAQ</span></button>
-      <button type="button" class="btn btn-header" data-info="about" aria-haspopup="dialog" title="About"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></g></svg><span class="btn-label">About</span></button>
+      <button type="button" class="btn btn-header btn-icon" data-info="help" aria-haspopup="dialog" title="Help"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.5v.01"/></g></svg><span class="btn-label">Help</span></button>
+      <button type="button" class="btn btn-header btn-icon" data-info="faq" aria-haspopup="dialog" title="FAQ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></g></svg><span class="btn-label">FAQ</span></button>
+      <button type="button" class="btn btn-header btn-icon" data-info="about" aria-haspopup="dialog" title="About"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></g></svg><span class="btn-label">About</span></button>
     </nav>
     <button type="button" class="btn btn-header btn-icon" id="theme-toggle"></button>
     <button type="button" class="btn btn-light btn-icon" id="toggle-form" aria-controls="task-drawer" aria-haspopup="dialog" aria-label="Add task" title="Add task"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 5v14M5 12h14"/></g></svg></button>
@@ -1021,6 +1048,9 @@ const state = {
 };
 // Derived chart geometry for tooltips; rebuilt by every renderInsights().
 let chartModel = null;
+// Set when the Burn-down view opens, so only that render animates (not
+// re-renders from edits, filters or resizes).
+let animateNextPlot = false;
 let nextId = 1;
 
 const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -1333,10 +1363,10 @@ function burndownSvg(data, width) {
       <line class="today-line" x1="${x(todayIdx)}" x2="${x(todayIdx)}" y1="${T - 6}" y2="${y(0)}"/>
       <text x="${x(todayIdx)}" y="${T - 9}" text-anchor="middle" class="label-strong">Today</text>
       <polygon class="area-actual" points="${area}"/>
-      <polyline class="line-ideal" points="${pts("ideal").join(" ")}"/>
-      <polyline class="line-actual" points="${actual.join(" ")}"/>
+      <polyline class="line-ideal" pathLength="1" points="${pts("ideal").join(" ")}"/>
+      <polyline class="line-actual" pathLength="1" points="${actual.join(" ")}"/>
       <circle class="dot-actual" cx="${x(todayIdx)}" cy="${y(nowVal)}" r="4.5"/>
-      <text x="${x(todayIdx) + 9}" y="${y(nowVal) - 8}" class="label-strong">${nowVal} open</text>
+      <text x="${x(todayIdx) + 9}" y="${y(nowVal) - 8}" class="label-strong plot-end">${nowVal} open</text>
       <text x="${x(n - 1) + 6}" y="${y(endIdeal.ideal) + 4}">Ideal 0</text>
       <text x="${x(0)}" y="${H - 8}" text-anchor="start">${escapeHtml(shortDate(data[0].iso))}</text>
       <text x="${x(n - 1)}" y="${H - 8}" text-anchor="end">${escapeHtml(shortDate(endIdeal.iso))}</text>
@@ -1359,13 +1389,13 @@ function weeklySvg(weeks, width) {
     const r = Math.min(4, (base - yTop) / 2);
     // 4px rounded data-end, square at the baseline
     const shape = w.done
-      ? `<path class="bar" d="M${x0},${base} V${yTop + r} Q${x0},${yTop} ${x0 + r},${yTop} H${x0 + barW - r} Q${x0 + barW},${yTop} ${x0 + barW},${yTop + r} V${base} Z"/>`
+      ? `<path class="bar" style="--i: ${i}" d="M${x0},${base} V${yTop + r} Q${x0},${yTop} ${x0 + r},${yTop} H${x0 + barW - r} Q${x0 + barW},${yTop} ${x0 + barW},${yTop + r} V${base} Z"/>`
       : "";
     return `
       <rect class="bar-hit" x="${L + band * i}" y="${T - 18}" width="${band}" height="${base - T + 18}" tabindex="0" data-week="${i}"
             aria-label="Week starting ${escapeHtml(formatDate(w.start))}: ${w.done} completed"/>
       ${shape}
-      <text x="${cx}" y="${yTop - 6}" text-anchor="middle" class="label-strong">${w.done}</text>
+      <text x="${cx}" y="${yTop - 6}" text-anchor="middle" class="label-strong bar-value" style="--i: ${i}">${w.done}</text>
       <text x="${cx}" y="${H - 8}" text-anchor="middle">${escapeHtml(w.label)}</text>`;
   }).join("");
   chartModel.weekly = { weeks, band, L };
@@ -1409,10 +1439,10 @@ function renderInsights(isRefit) {
 
   body.innerHTML = `
     <div class="stat-row">
-      <div class="stat"><p class="stat-label">Open now</p><p class="stat-value">${fc.open}</p><p class="stat-sub">Ideal today: ${fmtIdeal(burndown[BURNDOWN_PAST_DAYS].ideal)}</p></div>
-      <div class="stat"><p class="stat-label">Completed, last ${VELOCITY_DAYS} days</p><p class="stat-value">${fc.recent}</p><p class="stat-sub">${fc.perWeek.toFixed(1)} per week</p></div>
-      <div class="stat"><p class="stat-label">Projected finish</p><p class="stat-value">${escapeHtml(finishText)}</p><p class="stat-sub">${statusChip}</p></div>
-      <div class="stat"><p class="stat-label">Period ends</p><p class="stat-value">${escapeHtml(shortDate(fc.periodEnd))}</p><p class="stat-sub">${BURNDOWN_AHEAD_DAYS} days left</p></div>
+      <div class="stat" style="--i: 0"><p class="stat-label">Open now</p><p class="stat-value">${fc.open}</p><p class="stat-sub">Ideal today: ${fmtIdeal(burndown[BURNDOWN_PAST_DAYS].ideal)}</p></div>
+      <div class="stat" style="--i: 1"><p class="stat-label">Completed, last ${VELOCITY_DAYS} days</p><p class="stat-value">${fc.recent}</p><p class="stat-sub">${fc.perWeek.toFixed(1)} per week</p></div>
+      <div class="stat" style="--i: 2"><p class="stat-label">Projected finish</p><p class="stat-value">${escapeHtml(finishText)}</p><p class="stat-sub">${statusChip}</p></div>
+      <div class="stat" style="--i: 3"><p class="stat-label">Period ends</p><p class="stat-value">${escapeHtml(shortDate(fc.periodEnd))}</p><p class="stat-sub">${BURNDOWN_AHEAD_DAYS} days left</p></div>
     </div>
     <div class="chart-grid">
       <div class="chart-card">
@@ -1446,9 +1476,11 @@ function renderInsights(isRefit) {
           <tbody>${weekRows}</tbody></table>
       </div>
     </details>`;
+  body.classList.toggle("is-plotting", animateNextPlot);
   // First paint guesses the widths; redraw once at the real ones.
   const fit = (id, used) => Math.abs(body.querySelector(id).clientWidth - used) > 2;
   if (isRefit !== true && (fit("#bd-box", bdWidth) || fit("#wk-box", wkWidth))) renderInsights(true);
+  if (isRefit !== true) animateNextPlot = false;
 }
 
 // Tooltip rows are built with textContent: labels never go through innerHTML.
@@ -1516,6 +1548,7 @@ function bindInsightEvents() {
     const btn = e.target.closest(".view-btn");
     if (!btn || btn.dataset.view === state.view) return;
     state.view = btn.dataset.view;
+    animateNextPlot = state.view === "insights";
     renderInsights();
   });
 
@@ -1557,8 +1590,13 @@ function bindInsightEvents() {
   let frame = 0;
   let lastWidth = panel.clientWidth;
   new ResizeObserver(() => {
-    if (panel.clientWidth === lastWidth) return;
-    lastWidth = panel.clientWidth;
+    const width = panel.clientWidth;
+    const wasHidden = lastWidth === 0;
+    if (width === lastWidth) return;
+    lastWidth = width;
+    // Showing or hiding the view isn't a resize: renderInsights already
+    // drew at the right width, and redrawing now would cut its animation.
+    if (wasHidden || width === 0) return;
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(renderInsights);
   }).observe(panel);
