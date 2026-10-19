@@ -273,7 +273,7 @@
   .form-actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); }
 
   /* ============================================================
-     View switch: Board | Burn-down
+     View switch: Burn-down | Board
      ============================================================ */
   .view-switch {
     display: inline-flex; gap: 2px; padding: 3px; flex: none;
@@ -741,7 +741,7 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to board</a>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <!-- ============================================================
      Header: brand, live summary, nav + actions
@@ -838,8 +838,8 @@
          ============================================================ -->
     <section class="filters panel" aria-label="View and filter tasks">
       <div class="view-switch" role="group" aria-label="View">
-        <button type="button" class="view-btn" data-view="board" aria-pressed="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></g></svg>Board</button>
-        <button type="button" class="view-btn" data-view="insights" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4v16h16"/><path d="M7 7l4 5 3-2 5 6"/></g></svg>Burn-down</button>
+        <button type="button" class="view-btn" data-view="insights" aria-pressed="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4v16h16"/><path d="M7 7l4 5 3-2 5 6"/></g></svg>Burn-down</button>
+        <button type="button" class="view-btn" data-view="board" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></g></svg>Board</button>
       </div>
       <div class="field">
         <label for="flt-project">Project</label>
@@ -860,7 +860,7 @@
     <!-- ============================================================
          Burn-down insights (rendered by renderInsights)
          ============================================================ -->
-    <section class="insights panel" aria-labelledby="insights-heading" hidden>
+    <section class="insights panel" aria-labelledby="insights-heading">
       <div class="insights-head">
         <div class="insights-title">
           <h2 id="insights-heading">Burn-down</h2>
@@ -873,7 +873,7 @@
     <!-- ============================================================
          Kanban board (columns are rendered by renderBoard)
          ============================================================ -->
-    <section class="board" id="board" aria-label="Kanban board"></section>
+    <section class="board" id="board" aria-label="Kanban board" hidden></section>
   </main>
 </div>
 
@@ -910,7 +910,7 @@
       <li><strong>Move a task</strong> by dragging its card to another column, or pick a column from the card's <strong>Move ▸</strong> menu.</li>
       <li><strong>Delete a task</strong> with the <strong>×</strong> on its card, then confirm with <strong>Yes</strong>. Choose <strong>No</strong> to keep it.</li>
       <li><strong>Filter the board</strong> by project, assignee or priority. Column counts show filtered tasks; the header chips always count everything.</li>
-      <li><strong>See progress</strong> with <strong>Burn-down</strong> next to the filters: open tasks against an ideal line, weekly completions and a projected finish. <strong>Board</strong> switches back.</li>
+      <li><strong>See progress</strong> on <strong>Burn-down</strong>, the view the page opens on: open tasks against an ideal line, weekly completions and a projected finish. <strong>Board</strong>, next to it above the filters, shows the Kanban columns.</li>
       <li><strong>Switch theme</strong> with the sun / moon button. The board follows your system setting until you choose.</li>
     </ol>
     <h3>Columns</h3>
@@ -1071,13 +1071,13 @@ const state = {
   tasks: [],
   filters: { project: "", assignee: "", priority: "" },
   theme: null, // null follows the OS; "light" / "dark" once the user picks
-  view: "board", // "board" or "insights" (burn-down)
+  view: "insights", // "insights" (burn-down, the default) or "board"
 };
 // Derived chart geometry for tooltips; rebuilt by every renderInsights().
 let chartModel = null;
 // Set when the Burn-down view opens, so only that render animates (not
 // re-renders from edits, filters or resizes).
-let animateNextPlot = false;
+let animateNextPlot = true; // the page opens on Burn-down, so the first plot animates
 let nextId = 1;
 
 const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
