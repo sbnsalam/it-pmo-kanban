@@ -22,11 +22,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tags are needed to stage the frozen v1 page
 
-      - name: Stage the site (index.html only)
+      # The root stays on the original release; the current board ships under /v2/.
+      - name: Stage the site (v1 at root, v2 from main)
+        env:
+          V1_REF: v1.0.0
         run: |
-          mkdir -p _site
-          cp index.html _site/
+          mkdir -p _site/v2
+          git show "$V1_REF:index.html" > _site/index.html
+          cp index.html _site/v2/index.html
 
       - uses: actions/configure-pages@v5
 

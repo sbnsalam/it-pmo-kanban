@@ -3,38 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IT PMO Board</title>
+<meta name="color-scheme" content="light dark">
+<title>Throughline · IT PMO Board</title>
 <!-- Internal demo / training tool for a fictitious bank's IT PMO. Not an official system of any real organisation. -->
 <style>
   /* ============================================================
-     Design tokens: palette, spacing scale, typography
+     Design tokens: semantic colours (light | dark), spacing, type.
+     light-dark() picks a value from the active color-scheme, which
+     follows the OS until the header toggle sets data-theme.
      ============================================================ */
   :root {
-    --blue-900: #0b2545;
-    --blue-800: #13315c;
-    --blue-700: #1d4e89;
-    --blue-600: #2563a6;
-    --blue-100: #e3edf8;
-    --blue-50:  #f2f6fb;
-    --ink:      #1b2533;
-    --ink-soft: #4f5d70;
-    --line:     #d5dde8;
-    --surface:  #ffffff;
-    --page:     #eef2f7;
+    color-scheme: light dark;
 
-    --prio-critical: #c62828;
-    --prio-high:     #d48806;
-    --prio-medium:   #2563a6;
-    --prio-low:      #7a8494;
+    --page:       light-dark(#f3f6fa, #0b1220);
+    --surface:    light-dark(#ffffff, #131c2c);
+    --surface-2:  light-dark(#e9eff7, #0f1727);
+    --surface-3:  light-dark(#d9e6f5, #1a2b46);
+    --field:      light-dark(#ffffff, #0c1422);
+    --ink:        light-dark(#142033, #e6edf6);
+    --ink-soft:   light-dark(#4f5d70, #9fadc0);
+    --heading:    light-dark(#0b2545, #dbe7ff);
+    --line:       light-dark(#d5dde8, #27364e);
 
-    --danger:      #b42318;
-    --danger-bg:   #fdecea;
-    --success:     #1e7a3c;
-    --success-bg:  #e7f5ec;
-    --warning:     #8a5a00;
-    --warning-bg:  #fff4dc;
+    --brand:        light-dark(#1d5fa8, #6ea8ff);
+    --brand-strong: light-dark(#13467f, #9cc3ff);
+    --on-brand:     light-dark(#ffffff, #0b1220);
+
+    /* Header stays navy in both themes */
+    --header-bg:     light-dark(#0b2545, #08101e);
+    --header-ink:    #ffffff;
+    --header-chip:   light-dark(#13315c, #14213a);
+    --header-line:   light-dark(#2a548c, #2a3d5e);
+    --header-alert:  light-dark(#5a1a1a, #4a1616);
+    --header-alert-line: light-dark(#8c2b2b, #7a2a2a);
+
+    --prio-critical: light-dark(#c62828, #ff6b6b);
+    --prio-high:     light-dark(#c27c0e, #f5b544);
+    --prio-medium:   light-dark(#2563a6, #6ea8ff);
+    --prio-low:      light-dark(#7a8494, #8c98a8);
+
+    --pill-critical-ink: light-dark(#a61b1b, #ff9a9a);
+    --pill-critical-bg:  light-dark(#fdecec, #3a1717);
+    --pill-high-ink:     light-dark(#7a4f00, #f5c066);
+    --pill-high-bg:      light-dark(#fff4dc, #33270f);
+    --pill-medium-ink:   light-dark(#1d4e89, #9cc3ff);
+    --pill-medium-bg:    light-dark(#e3edf8, #172a47);
+    --pill-low-ink:      light-dark(#4f5866, #b4bfcd);
+    --pill-low-bg:       light-dark(#eef0f3, #1f2733);
+
+    --status-backlog:  light-dark(#64748b, #94a3b8);
+    --status-progress: light-dark(#1d5fa8, #6ea8ff);
+    --status-blocked:  light-dark(#c2410c, #fb923c);
+    --status-done:     light-dark(#1e7a3c, #5fd38a);
+
+    --danger:       light-dark(#b42318, #ff7b72);
+    --danger-bg:    light-dark(#fdecea, #3a1614);
+    --danger-line:  light-dark(#f3b8b2, #6b2622);
+    --success:      light-dark(#1e7a3c, #6ee09a);
+    --success-bg:   light-dark(#e7f5ec, #11301d);
+    --success-line: light-dark(#a9d8b8, #245c38);
+    --warning:      light-dark(#8a5a00, #f5c066);
+    --warning-bg:   light-dark(#fff4dc, #33270f);
+    --warning-line: light-dark(#f0d18a, #6a5016);
+    --info:         light-dark(#13315c, #cfe0ff);
+    --info-bg:      light-dark(#e3edf8, #172a47);
+    --info-line:    light-dark(#b9cfe9, #2b4a75);
 
     --focus: #f5a623;
+    --scrim: rgba(4, 10, 20, 0.55);
 
     --space-1: 4px;
     --space-2: 8px;
@@ -43,13 +79,19 @@
     --space-5: 24px;
     --space-6: 32px;
 
-    --radius-sm: 4px;
-    --radius:    8px;
-    --shadow:    0 1px 2px rgba(11, 37, 69, 0.08), 0 2px 6px rgba(11, 37, 69, 0.06);
+    --radius-sm: 6px;
+    --radius:    10px;
+    --shadow:    light-dark(0 1px 2px rgba(11, 37, 69, 0.08), 0 1px 2px rgba(0, 0, 0, 0.45));
+    --shadow-lg: light-dark(0 12px 32px rgba(11, 37, 69, 0.22), 0 12px 32px rgba(0, 0, 0, 0.6));
+
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dur: 180ms;
 
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark; }
 
   /* ============================================================
      Base
@@ -59,11 +101,13 @@
   body {
     font-family: var(--font);
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--ink);
     background: var(--page);
+    transition: background-color var(--dur), color var(--dur);
   }
   button, input, select, textarea { font: inherit; color: inherit; }
+  button, select { cursor: pointer; touch-action: manipulation; }
   :focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
@@ -72,26 +116,32 @@
     position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
   }
+  .skip-link {
+    position: absolute; left: var(--space-4); top: -48px; z-index: 20;
+    background: var(--surface); color: var(--brand-strong);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); font-weight: 600;
+  }
+  .skip-link:focus { top: var(--space-2); }
+  svg.icon { width: 18px; height: 18px; flex: none; }
 
   /* ============================================================
-     Header: wordmark, summary strip, actions
+     Header: brand, summary strip, nav + actions
      ============================================================ */
   .app-header {
-    background: var(--blue-900);
-    color: #fff;
+    background: var(--header-bg);
+    color: var(--header-ink);
     padding: var(--space-3) var(--space-5);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3) var(--space-5);
   }
-  .wordmark {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    margin: 0;
-  }
-  .wordmark span { font-weight: 400; opacity: 0.75; font-size: 14px; margin-left: var(--space-2); letter-spacing: 0; }
+  .brand { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+  .brand-logo { width: 36px; height: 36px; flex: none; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-name { font-size: 19px; font-weight: 700; letter-spacing: 0.01em; }
+  .brand-sub { font-size: 12px; font-weight: 500; opacity: 0.75; letter-spacing: 0.06em; text-transform: uppercase; }
+
   .summary {
     display: flex;
     flex-wrap: wrap;
@@ -102,43 +152,50 @@
     flex: 1 1 auto;
   }
   .summary li {
-    background: var(--blue-800);
-    border: 1px solid var(--blue-700);
+    background: var(--header-chip);
+    border: 1px solid var(--header-line);
     border-radius: 999px;
     padding: 2px var(--space-3);
     font-size: 12px;
     white-space: nowrap;
   }
   .summary strong { font-variant-numeric: tabular-nums; }
-  .summary .is-overdue { background: #5a1a1a; border-color: #8c2b2b; }
-  .header-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
-  .demo-note { font-size: 12px; opacity: 0.8; margin: 0; }
+  .summary .is-overdue { background: var(--header-alert); border-color: var(--header-alert-line); }
+
+  .header-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .header-nav { display: flex; gap: var(--space-1); }
+  .demo-note { font-size: 12px; opacity: 0.75; margin: 0; flex-basis: 100%; }
 
   .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 36px;
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
     padding: var(--space-2) var(--space-4);
-    cursor: pointer;
     background: var(--surface);
-    color: var(--blue-800);
+    color: var(--brand-strong);
     font-weight: 600;
+    transition: background-color var(--dur), border-color var(--dur), color var(--dur);
   }
-  .btn-primary { background: var(--blue-600); color: #fff; }
-  .btn-primary:hover { background: var(--blue-700); }
-  .btn-light { background: #fff; color: var(--blue-900); }
+  .btn-primary { background: var(--brand); color: var(--on-brand); }
+  .btn-primary:hover { background: var(--brand-strong); }
+  .btn-light { background: #ffffff; color: #0b2545; }
+  .btn-light:hover { background: #dbe7f5; }
   .btn-ghost { background: transparent; border-color: var(--line); color: var(--ink-soft); }
+  .btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+  .btn-header { background: transparent; color: var(--header-ink); border-color: transparent; padding: var(--space-2) var(--space-3); }
+  .btn-header:hover { background: var(--header-chip); border-color: var(--header-line); }
+  .btn-icon { padding: var(--space-2); width: 36px; }
   .btn[disabled] { opacity: 0.6; cursor: progress; }
 
   /* ============================================================
-     Layout: sidebar (form) + main (filters, board)
+     Layout: main (filters, board) takes the full width
      ============================================================ */
-  .layout {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-5);
-    align-items: start;
-  }
+  .layout { padding: var(--space-5); }
+  main:focus { outline: none; }
 
   .panel {
     background: var(--surface);
@@ -148,24 +205,52 @@
   }
 
   /* ============================================================
-     Add Task form
+     Add Task drawer: a modal <dialog> that slides in from the right
      ============================================================ */
-  .sidebar { padding: var(--space-4); position: sticky; top: var(--space-4); }
-  .sidebar h2 { margin: 0 0 var(--space-3); font-size: 16px; color: var(--blue-900); }
+  .drawer {
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(400px, 100vw);
+    max-width: 100vw;
+    height: 100%;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-lg);
+  }
+  .drawer[open] { display: flex; flex-direction: column; animation: drawer-in 240ms var(--ease-out); }
+  .drawer::backdrop { background: var(--scrim); }
+  @keyframes drawer-in {
+    from { transform: translateX(100%); }
+    to   { transform: none; }
+  }
+  .drawer-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--line);
+  }
+  .drawer-head h2 { margin: 0; font-size: 18px; color: var(--heading); }
+  .drawer-body { flex: 1; overflow-y: auto; padding: var(--space-4) var(--space-5) var(--space-5); }
   .field { margin-bottom: var(--space-3); }
   .field label { display: block; font-weight: 600; margin-bottom: var(--space-1); font-size: 13px; }
   .field .req { color: var(--danger); }
   .field input, .field select, .field textarea {
     width: 100%;
+    min-height: 36px;
     padding: var(--space-2);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    background: #fff;
+    background: var(--field);
+    transition: border-color var(--dur);
   }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--ink-soft); }
   .field textarea { resize: vertical; min-height: 64px; }
   .field [aria-invalid="true"] { border-color: var(--danger); background: var(--danger-bg); }
-  .field .hint { font-size: 11px; color: var(--ink-soft); margin: 2px 0 0; }
-  .field .error { font-size: 12px; color: var(--danger); margin: 2px 0 0; min-height: 0; }
+  .field .hint { font-size: 12px; color: var(--ink-soft); margin: 2px 0 0; }
+  .field .error { font-size: 12px; color: var(--danger); margin: 2px 0 0; }
   .field .error:empty { display: none; }
   .form-actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); }
 
@@ -183,6 +268,7 @@
   .filters .field { margin: 0; min-width: 160px; flex: 1 1 160px; }
   .filters .btn { flex: 0 0 auto; }
   .filter-status { font-size: 12px; color: var(--ink-soft); margin: 0; width: 100%; }
+  .filter-status:empty { display: none; }
 
   /* ============================================================
      Kanban board
@@ -192,30 +278,43 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-4);
   }
+  .board:focus { outline: none; }
   .column {
-    background: var(--blue-50);
+    --status: var(--status-backlog);
+    background: var(--surface-2);
     border: 2px dashed transparent;
     border-radius: var(--radius);
     padding: var(--space-3);
     min-height: 200px;
-    transition: background-color 120ms, border-color 120ms;
+    transition: background-color var(--dur), border-color var(--dur);
   }
-  .column.drop-target { background: var(--blue-100); border-color: var(--blue-600); }
+  .column[data-status="In Progress"] { --status: var(--status-progress); }
+  .column[data-status="Blocked"]     { --status: var(--status-blocked); }
+  .column[data-status="Done"]        { --status: var(--status-done); }
+  .column.drop-target { background: var(--surface-3); border-color: var(--brand); }
   .column-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--space-2);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: 2px solid var(--blue-700);
+    border-bottom: 2px solid var(--status);
   }
-  .column-header h2 { margin: 0; font-size: 14px; color: var(--blue-900); text-transform: uppercase; letter-spacing: 0.05em; }
-  .column-header p { margin: 0; font-size: 11px; color: var(--ink-soft); }
+  .column-header h2 {
+    display: flex; align-items: center; gap: var(--space-2);
+    margin: 0; font-size: 13px; color: var(--heading); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .column-header h2::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--status);
+  }
+  .column-header p { margin: 0; font-size: 12px; color: var(--ink-soft); }
   .count-badge {
-    background: var(--blue-700);
-    color: #fff;
+    background: var(--surface);
+    color: var(--heading);
+    border: 1px solid var(--line);
     border-radius: 999px;
-    min-width: 26px;
+    min-width: 28px;
     padding: 1px var(--space-2);
     text-align: center;
     font-size: 12px;
@@ -223,7 +322,11 @@
     font-variant-numeric: tabular-nums;
   }
   .card-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-  .empty { font-size: 12px; color: var(--ink-soft); text-align: center; padding: var(--space-4) 0; font-style: italic; }
+  .empty {
+    font-size: 12px; color: var(--ink-soft); text-align: center;
+    padding: var(--space-5) var(--space-2); margin: 0;
+    border: 1px dashed var(--line); border-radius: var(--radius-sm);
+  }
 
   /* ============================================================
      Task card
@@ -231,12 +334,14 @@
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-left: 5px solid var(--prio-medium);
+    border-left: 4px solid var(--prio-medium);
     border-radius: var(--radius-sm);
     padding: var(--space-3);
     box-shadow: var(--shadow);
     cursor: grab;
+    transition: box-shadow var(--dur), border-color var(--dur);
   }
+  .card:hover { box-shadow: var(--shadow-lg); }
   .card.dragging { opacity: 0.5; }
   .card[data-priority="Critical"] { border-left-color: var(--prio-critical); }
   .card[data-priority="High"]     { border-left-color: var(--prio-high); }
@@ -245,10 +350,10 @@
 
   .card-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
   .task-id { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
-  .card-title { font-size: 14px; font-weight: 600; margin: var(--space-1) 0 var(--space-2); word-wrap: break-word; }
+  .card-title { font-size: 14px; font-weight: 600; margin: var(--space-1) 0 var(--space-2); overflow-wrap: anywhere; color: var(--ink); }
   .card-meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-2); font-size: 12px; }
   .card-meta dt { color: var(--ink-soft); }
-  .card-meta dd { margin: 0; word-wrap: break-word; }
+  .card-meta dd { margin: 0; overflow-wrap: anywhere; }
   .card-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: var(--space-2); }
 
   .pill {
@@ -259,29 +364,89 @@
     font-weight: 700;
     border: 1px solid currentColor;
   }
-  .pill-Critical { color: var(--prio-critical); background: #fdecec; }
-  .pill-High     { color: #8a5a00; background: #fff4dc; }
-  .pill-Medium   { color: var(--prio-medium); background: var(--blue-100); }
-  .pill-Low      { color: #4f5866; background: #eef0f3; }
-  .tag { background: var(--blue-50); color: var(--blue-800); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; }
-  .overdue { background: var(--danger-bg); color: var(--danger); border: 1px solid #f3b8b2; border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; font-weight: 700; }
+  .pill-Critical { color: var(--pill-critical-ink); background: var(--pill-critical-bg); }
+  .pill-High     { color: var(--pill-high-ink);     background: var(--pill-high-bg); }
+  .pill-Medium   { color: var(--pill-medium-ink);   background: var(--pill-medium-bg); }
+  .pill-Low      { color: var(--pill-low-ink);      background: var(--pill-low-bg); }
+  .tag { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; }
+  .overdue { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-line); border-radius: var(--radius-sm); padding: 1px var(--space-2); font-size: 11px; font-weight: 700; }
 
   .card-actions { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--line); }
-  .move-select { font-size: 12px; padding: 2px var(--space-1); border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; max-width: 60%; }
+  .move-select { font-size: 12px; min-height: 32px; padding: 2px var(--space-1); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--field); max-width: 60%; }
   .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
     border: 1px solid transparent;
     background: transparent;
     border-radius: var(--radius-sm);
-    width: 28px; height: 28px;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
+    width: 32px; height: 32px;
+    padding: 0;
     color: var(--ink-soft);
+    transition: background-color var(--dur), color var(--dur);
   }
   .icon-btn:hover { background: var(--danger-bg); color: var(--danger); }
   .confirm-delete { display: flex; align-items: center; gap: var(--space-1); font-size: 12px; color: var(--danger); font-weight: 600; }
-  .confirm-delete button { font-size: 12px; padding: 2px var(--space-2); border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--line); background: #fff; }
-  .confirm-delete .yes { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .confirm-delete button { font-size: 12px; min-height: 28px; padding: 2px var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+  .confirm-delete .yes { background: var(--danger); color: var(--on-brand); border-color: var(--danger); }
+
+  /* ============================================================
+     Help / FAQ / About dialog
+     ============================================================ */
+  .info-dialog {
+    width: min(680px, calc(100vw - 2 * var(--space-4)));
+    max-height: min(84vh, 760px);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-lg);
+  }
+  .info-dialog[open] { display: flex; flex-direction: column; animation: dialog-in var(--dur) var(--ease-out); }
+  .info-dialog::backdrop { background: var(--scrim); }
+  @keyframes dialog-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+  }
+  .info-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) 0;
+  }
+  .info-head h2 { margin: 0; font-size: 18px; color: var(--heading); display: flex; align-items: center; gap: var(--space-2); }
+  .info-head .brand-logo { width: 28px; height: 28px; }
+  .info-close, .drawer-close { color: var(--ink-soft); }
+  .info-close:hover, .drawer-close:hover { background: var(--surface-2); color: var(--ink); }
+  .tabs { display: flex; gap: var(--space-1); padding: var(--space-3) var(--space-5) 0; border-bottom: 1px solid var(--line); }
+  .tab {
+    border: 0; background: transparent; color: var(--ink-soft);
+    padding: var(--space-2) var(--space-3); min-height: 40px;
+    font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -1px;
+    transition: color var(--dur), border-color var(--dur);
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--brand-strong); border-bottom-color: var(--brand); }
+  .tab-panel { padding: var(--space-4) var(--space-5) var(--space-5); overflow-y: auto; font-size: 14px; }
+  .tab-panel:focus-visible { outline-offset: -3px; }
+  .tab-panel h3 { font-size: 14px; color: var(--heading); margin: var(--space-4) 0 var(--space-2); }
+  .tab-panel h3:first-child { margin-top: 0; }
+  .tab-panel p, .tab-panel li { max-width: 68ch; }
+  .tab-panel ol, .tab-panel ul { padding-left: 20px; margin: 0 0 var(--space-3); }
+  .tab-panel li { margin-bottom: var(--space-1); }
+  .tab-panel code, kbd { font-family: var(--font-mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .kbd-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .kbd-table th, .kbd-table td { text-align: left; padding: var(--space-2); border-bottom: 1px solid var(--line); }
+  .kbd-table th { color: var(--ink-soft); font-weight: 600; }
+  .faq details { border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: var(--space-2); background: var(--surface); }
+  .faq details[open] { background: var(--surface-2); }
+  .faq summary { cursor: pointer; padding: var(--space-3); font-weight: 600; list-style-position: inside; }
+  .faq summary:hover { color: var(--brand-strong); }
+  .faq details p { margin: 0; padding: 0 var(--space-3) var(--space-3); }
+  .about-lede { display: flex; gap: var(--space-4); align-items: center; margin-bottom: var(--space-3); }
+  .about-lede .brand-logo { width: 56px; height: 56px; }
+  .about-lede p { margin: 0; }
+  .callout { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-line); border-radius: var(--radius-sm); padding: var(--space-3); font-weight: 600; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: var(--space-1) var(--space-4); margin: 0; }
+  .facts dt { color: var(--ink-soft); }
+  .facts dd { margin: 0; }
 
   /* ============================================================
      Toasts
@@ -299,51 +464,94 @@
   .toast {
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     border: 1px solid;
     font-weight: 600;
+    animation: toast-in var(--dur) var(--ease-out);
   }
-  .toast-success { background: var(--success-bg); color: var(--success); border-color: #a9d8b8; }
-  .toast-warning { background: var(--warning-bg); color: var(--warning); border-color: #f0d18a; }
-  .toast-info    { background: var(--blue-100); color: var(--blue-800); border-color: #b9cfe9; }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .toast-success { background: var(--success-bg); color: var(--success); border-color: var(--success-line); }
+  .toast-warning { background: var(--warning-bg); color: var(--warning); border-color: var(--warning-line); }
+  .toast-info    { background: var(--info-bg);    color: var(--info);    border-color: var(--info-line); }
 
   /* ============================================================
-     Responsive: stack below 768px
+     Responsive: board goes 2-up below 1024px, stacks below 768px
      ============================================================ */
+  @media (max-width: 1023px) {
+    .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
   @media (max-width: 767px) {
     .app-header { padding: var(--space-3) var(--space-4); }
-    .layout { grid-template-columns: 1fr; padding: var(--space-4); }
-    .sidebar { position: static; }
+    .header-actions { width: 100%; }
+    .layout { padding: var(--space-4); }
+    .drawer-head, .drawer-body { padding-left: var(--space-4); padding-right: var(--space-4); }
     .board { grid-template-columns: 1fr; }
     .column { min-height: 0; }
+    .btn, .field input, .field select { min-height: 44px; }
+    .btn-icon { width: 44px; }
+    .field input, .field select, .field textarea { font-size: 16px; }
+    .icon-btn { width: 44px; height: 44px; }
+    .move-select { min-height: 44px; }
+    .info-head, .tabs { padding-left: var(--space-4); padding-right: var(--space-4); }
+    .tab-panel { padding: var(--space-4); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .column { transition: none; }
+    *, *::before, *::after { animation: none; transition: none; }
   }
 </style>
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to board</a>
+
 <!-- ============================================================
-     Header: wordmark, live summary, actions
+     Header: brand, live summary, nav + actions
      ============================================================ -->
 <header class="app-header">
-  <h1 class="wordmark">IT PMO<span>Project Board</span></h1>
+  <h1 class="brand">
+    <!-- Logo: three Kanban lanes stepping down as work flows, with an amber through-line underneath -->
+    <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <rect width="32" height="32" rx="8" fill="#2f7de1"/>
+      <rect x="7"    y="7" width="4" height="12" rx="2" fill="#ffffff"/>
+      <rect x="14"   y="7" width="4" height="9"  rx="2" fill="#ffffff" opacity="0.85"/>
+      <rect x="21"   y="7" width="4" height="6"  rx="2" fill="#ffffff" opacity="0.7"/>
+      <path d="M6 24 H24" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M21.5 20.5 L25 24 L21.5 27.5" stroke="#f5a623" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <span class="brand-text">
+      <span class="brand-name">Throughline</span>
+      <span class="brand-sub">IT PMO Board</span>
+    </span>
+  </h1>
   <ul class="summary" id="summary" aria-label="Board summary"></ul>
   <div class="header-actions">
+    <nav class="header-nav" aria-label="Help and information">
+      <button type="button" class="btn btn-header" data-info="help" aria-haspopup="dialog">Help</button>
+      <button type="button" class="btn btn-header" data-info="faq" aria-haspopup="dialog">FAQ</button>
+      <button type="button" class="btn btn-header" data-info="about" aria-haspopup="dialog">About</button>
+    </nav>
+    <button type="button" class="btn btn-header btn-icon" id="theme-toggle"></button>
+    <button type="button" class="btn btn-light" id="toggle-form" aria-controls="task-drawer" aria-haspopup="dialog">+ Add Task</button>
     <p class="demo-note">Demo mode: data is kept in memory and resets on refresh.</p>
-    <button type="button" class="btn btn-light" id="toggle-form" aria-controls="task-sidebar">+ Add Task</button>
   </div>
 </header>
 
 <div class="layout" id="layout">
 
   <!-- ============================================================
-       Sidebar: Add Task form
+       Add Task drawer: slides in from the right
        ============================================================ -->
-  <aside class="sidebar panel" id="task-sidebar" aria-labelledby="form-heading">
-    <h2 id="form-heading">Add Task</h2>
-    <form id="task-form" novalidate>
+  <dialog class="drawer" id="task-drawer" aria-labelledby="form-heading">
+    <div class="drawer-head">
+      <h2 id="form-heading">Add Task</h2>
+      <button type="button" class="icon-btn drawer-close" id="drawer-close" aria-label="Close Add Task panel">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+    </div>
+    <form id="task-form" class="drawer-body" novalidate>
       <div class="field">
         <label for="f-title">Task Title <span class="req" aria-hidden="true">*</span></label>
         <input id="f-title" name="title" type="text" maxlength="80" required aria-describedby="e-title">
@@ -365,7 +573,7 @@
       </div>
       <div class="field">
         <label for="f-assignee">Assignee <span class="req" aria-hidden="true">*</span></label>
-        <input id="f-assignee" name="assignee" type="text" maxlength="60" required aria-describedby="e-assignee">
+        <input id="f-assignee" name="assignee" type="text" maxlength="60" required autocomplete="name" aria-describedby="e-assignee">
         <p class="error" id="e-assignee"></p>
       </div>
       <div class="field">
@@ -386,9 +594,9 @@
         <button type="reset" class="btn btn-ghost">Clear</button>
       </div>
     </form>
-  </aside>
+  </dialog>
 
-  <main>
+  <main id="main" tabindex="-1">
     <!-- ============================================================
          Filter bar
          ============================================================ -->
@@ -416,6 +624,123 @@
   </main>
 </div>
 
+<!-- ============================================================
+     Help / FAQ / About: one modal dialog with three tabs
+     ============================================================ -->
+<dialog class="info-dialog" id="info-dialog" aria-labelledby="info-title">
+  <div class="info-head">
+    <h2 id="info-title">
+      <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect width="32" height="32" rx="8" fill="#2f7de1"/>
+        <rect x="7"  y="7" width="4" height="12" rx="2" fill="#ffffff"/>
+        <rect x="14" y="7" width="4" height="9"  rx="2" fill="#ffffff" opacity="0.85"/>
+        <rect x="21" y="7" width="4" height="6"  rx="2" fill="#ffffff" opacity="0.7"/>
+        <path d="M6 24 H24" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M21.5 20.5 L25 24 L21.5 27.5" stroke="#f5a623" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Throughline guide
+    </h2>
+    <button type="button" class="icon-btn info-close" id="info-close" aria-label="Close">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+    </button>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Guide sections">
+    <button type="button" class="tab" role="tab" id="tab-help"  aria-controls="panel-help"  aria-selected="true">Help</button>
+    <button type="button" class="tab" role="tab" id="tab-faq"   aria-controls="panel-faq"   aria-selected="false" tabindex="-1">FAQ</button>
+    <button type="button" class="tab" role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" tabindex="-1">About</button>
+  </div>
+
+  <section class="tab-panel" role="tabpanel" id="panel-help" aria-labelledby="tab-help" tabindex="0">
+    <h3>Quick start</h3>
+    <ol>
+      <li><strong>Add a task</strong> with <strong>+ Add Task</strong> in the header. A panel slides in from the right; title, assignee and due date are required.</li>
+      <li><strong>Move a task</strong> by dragging its card to another column, or pick a column from the card's <strong>Move ▸</strong> menu.</li>
+      <li><strong>Delete a task</strong> with the <strong>×</strong> on its card, then confirm with <strong>Yes</strong>. Choose <strong>No</strong> to keep it.</li>
+      <li><strong>Filter the board</strong> by project, assignee or priority. Column counts show filtered tasks; the header chips always count everything.</li>
+      <li><strong>Switch theme</strong> with the sun / moon button. The board follows your system setting until you choose.</li>
+    </ol>
+    <h3>Columns</h3>
+    <ul>
+      <li><strong>Backlog</strong>: logged, not yet scheduled.</li>
+      <li><strong>In Progress</strong>: actively being worked.</li>
+      <li><strong>Blocked</strong>: waiting on a dependency, vendor or approval.</li>
+      <li><strong>Done</strong>: completed or closed.</li>
+    </ul>
+    <h3>Card colours</h3>
+    <p>The left edge of each card and its pill show priority: red for Critical, amber for High, blue for Medium and grey for Low. An <strong>Overdue</strong> badge appears when the due date has passed and the task isn't Done.</p>
+    <h3>Keyboard</h3>
+    <table class="kbd-table">
+      <thead><tr><th scope="col">Key</th><th scope="col">Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>?</kbd></td><td>Open this guide</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close the guide or the Add Task panel</td></tr>
+        <tr><td><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Move between fields, cards and buttons</td></tr>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Switch tabs in this guide</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="tab-panel faq" role="tabpanel" id="panel-faq" aria-labelledby="tab-faq" tabindex="0" hidden>
+    <details>
+      <summary>Where is my data saved?</summary>
+      <p>Nowhere. Tasks live in memory only, so refreshing the page resets the board to the demo tasks. Nothing is written to your browser or a server.</p>
+    </details>
+    <details>
+      <summary>Who gets an email when I add a task?</summary>
+      <p>Each new task sends one notification through FormSubmit to the address set in <code>FORMSUBMIT_ENDPOINT</code> at the top of the script. It's the only thing that leaves the page.</p>
+    </details>
+    <details>
+      <summary>Why didn't the notification email arrive?</summary>
+      <p>FormSubmit needs a one-time activation. The first task sends a confirmation email to the configured address, and nothing is delivered until someone clicks its link. If sending fails, the card stays on the board and a warning appears.</p>
+    </details>
+    <details>
+      <summary>Can I move cards without a mouse?</summary>
+      <p>Yes. Every card has a <strong>Move ▸</strong> menu that works with the keyboard and screen readers.</p>
+    </details>
+    <details>
+      <summary>Why can't I pick a due date in the past?</summary>
+      <p>New tasks must be due today or later. Some demo tasks are already overdue so you can see how overdue work is flagged.</p>
+    </details>
+    <details>
+      <summary>Why don't the column counts match the header?</summary>
+      <p>Column counts respect your filters. The header chips always count every task on the board, including how many are overdue.</p>
+    </details>
+    <details>
+      <summary>Does the theme choice stick?</summary>
+      <p>Only until you refresh. The board stores nothing, so it goes back to following your system light/dark setting.</p>
+    </details>
+    <details>
+      <summary>Is this a real bank system?</summary>
+      <p>No. It's a demo and training tool for a fictitious bank's IT PMO. The projects, people and tasks are made up.</p>
+    </details>
+  </section>
+
+  <section class="tab-panel" role="tabpanel" id="panel-about" aria-labelledby="tab-about" tabindex="0" hidden>
+    <div class="about-lede">
+      <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect width="32" height="32" rx="8" fill="#2f7de1"/>
+        <rect x="7"  y="7" width="4" height="12" rx="2" fill="#ffffff"/>
+        <rect x="14" y="7" width="4" height="9"  rx="2" fill="#ffffff" opacity="0.85"/>
+        <rect x="21" y="7" width="4" height="6"  rx="2" fill="#ffffff" opacity="0.7"/>
+        <path d="M6 24 H24" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M21.5 20.5 L25 24 L21.5 27.5" stroke="#f5a623" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <p><strong>Throughline</strong> is a lightweight Kanban board for an IT Project Management Office. It keeps the thread of every task visible, from backlog to done.</p>
+    </div>
+    <p class="callout">Demo and training tool for a fictitious bank. It isn't an official system of any real organisation.</p>
+    <h3>The name and logo</h3>
+    <p>A through-line is the thread that connects a story from start to finish. The logo shows three Kanban lanes with an amber line carrying work forward.</p>
+    <h3>Details</h3>
+    <dl class="facts">
+      <dt>Version</dt><dd id="about-version"></dd>
+      <dt>Built with</dt><dd>One HTML file: plain HTML, CSS and JavaScript, no build step</dd>
+      <dt>Data</dt><dd>In memory only; resets on refresh</dd>
+      <dt>Network</dt><dd>One call per new task, to FormSubmit</dd>
+      <dt>Themes</dt><dd>Light and dark, following your system by default</dd>
+    </dl>
+  </section>
+</dialog>
+
 <!-- Toast region: announces success / warning messages to assistive tech -->
 <div class="toast-region" id="toasts" aria-live="polite" aria-atomic="false"></div>
 
@@ -434,7 +759,9 @@
    Config: change these in one place
    ============================================================ */
 const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL@example.com";
-const TASK_ID_PREFIX = "UOB-ITPM-";
+const APP_NAME = "Throughline";
+const APP_VERSION = "2.0";
+const TASK_ID_PREFIX = "ITPM-";
 const TOAST_MS = 4500;
 
 /* ============================================================
@@ -455,6 +782,13 @@ const CATEGORIES = [
   "Data", "Compliance", "Vendor",
 ];
 const PRIORITIES = ["Critical", "High", "Medium", "Low"];
+const INFO_TABS = ["help", "faq", "about"];
+
+const ICONS = {
+  close: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
+  sun: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>',
+  moon: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>',
+};
 
 /* ============================================================
    State: the single source of truth
@@ -462,8 +796,11 @@ const PRIORITIES = ["Critical", "High", "Medium", "Low"];
 const state = {
   tasks: [],
   filters: { project: "", assignee: "", priority: "" },
+  theme: null, // null follows the OS; "light" / "dark" once the user picks
 };
 let nextId = 1;
+
+const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 /* ============================================================
    Helpers
@@ -570,7 +907,7 @@ function renderCard(task) {
          <button type="button" class="yes" data-action="confirm-delete" data-id="${id}">Yes</button>
          <button type="button" class="no" data-action="cancel-delete" data-id="${id}">No</button>
        </div>`
-    : `<button type="button" class="icon-btn" data-action="delete" data-id="${id}" aria-label="Delete task ${id}: ${title}">&times;</button>`;
+    : `<button type="button" class="icon-btn" data-action="delete" data-id="${id}" aria-label="Delete task ${id}: ${title}">${ICONS.close}</button>`;
 
   return `
     <li class="card" draggable="true" tabindex="-1" data-id="${id}" data-priority="${escapeHtml(task.priority)}"
@@ -606,7 +943,7 @@ function renderBoard() {
     const headingId = "col-" + s.key.replace(/\s+/g, "-").toLowerCase();
     const cards = colTasks.length
       ? `<ul class="card-list">${colTasks.map(renderCard).join("")}</ul>`
-      : '<p class="empty">No tasks</p>';
+      : '<p class="empty">No tasks here. Drop a card or use Move ▸.</p>';
     return `
       <section class="column" data-status="${escapeHtml(s.key)}" aria-labelledby="${headingId}">
         <div class="column-header">
@@ -633,6 +970,30 @@ function focusInCard(id, selector) {
   if (!card) return;
   const target = selector ? card.querySelector(selector) : card;
   (target || card).focus();
+}
+
+/* ============================================================
+   Theme: follows the OS until the user toggles (in memory only)
+   ============================================================ */
+function effectiveTheme() {
+  return state.theme || (darkQuery.matches ? "dark" : "light");
+}
+
+function applyTheme() {
+  const root = document.documentElement;
+  if (state.theme) root.dataset.theme = state.theme;
+  else delete root.dataset.theme;
+
+  const next = effectiveTheme() === "dark" ? "light" : "dark";
+  const btn = document.getElementById("theme-toggle");
+  btn.innerHTML = next === "dark" ? ICONS.moon : ICONS.sun;
+  btn.setAttribute("aria-label", `Switch to ${next} theme`);
+  btn.title = `Switch to ${next} theme`;
+}
+
+function toggleTheme() {
+  state.theme = effectiveTheme() === "dark" ? "light" : "dark";
+  applyTheme();
 }
 
 /* ============================================================
@@ -689,7 +1050,7 @@ async function notifyNewTask(task) {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
-      _subject: `[UOB IT PMO] New task ${task.id}: ${task.title}`,
+      _subject: `[${APP_NAME}] New task ${task.id}: ${task.title}`,
       _template: "table",
       _captcha: "false",
       "Task ID": task.id,
@@ -781,7 +1142,7 @@ async function handleSubmit(event) {
   const task = addTask(values);
   resetFormDefaults(form);
   showToast(`${task.id} added to ${task.status}`, "success");
-  document.getElementById("f-title").focus();
+  closeTaskDrawer();
 
   const btn = document.getElementById("submit-btn");
   btn.disabled = true;
@@ -890,12 +1251,82 @@ function bindFilterEvents() {
   });
 }
 
+/* ============================================================
+   Add Task drawer (native modal <dialog>: Esc and focus return built in)
+   ============================================================ */
+function openTaskDrawer() {
+  const drawer = document.getElementById("task-drawer");
+  if (!drawer.open) drawer.showModal();
+  document.getElementById("f-title").focus();
+}
+
+function closeTaskDrawer() {
+  document.getElementById("task-drawer").close();
+}
+
 function bindHeaderEvents() {
-  // "+ Add Task" jumps to the form (it sits above the board on narrow screens).
-  document.getElementById("toggle-form").addEventListener("click", () => {
-    const title = document.getElementById("f-title");
-    title.scrollIntoView({ block: "center" });
-    title.focus();
+  const drawer = document.getElementById("task-drawer");
+  document.getElementById("toggle-form").addEventListener("click", openTaskDrawer);
+  document.getElementById("drawer-close").addEventListener("click", closeTaskDrawer);
+  // A click on the backdrop lands on the <dialog> element itself.
+  drawer.addEventListener("click", (e) => { if (e.target === drawer) closeTaskDrawer(); });
+
+  document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+  // While following the OS, keep the toggle's icon and label in sync with it.
+  darkQuery.addEventListener("change", () => { if (!state.theme) applyTheme(); });
+}
+
+/* ============================================================
+   Help / FAQ / About dialog
+   ============================================================ */
+function selectInfoTab(tab, { focus = false } = {}) {
+  INFO_TABS.forEach((t) => {
+    const on = t === tab;
+    const btn = document.getElementById(`tab-${t}`);
+    btn.setAttribute("aria-selected", String(on));
+    btn.tabIndex = on ? 0 : -1;
+    document.getElementById(`panel-${t}`).hidden = !on;
+  });
+  if (focus) document.getElementById(`tab-${tab}`).focus();
+}
+
+function openInfo(tab) {
+  const dialog = document.getElementById("info-dialog");
+  selectInfoTab(tab);
+  if (!dialog.open) dialog.showModal();
+  document.getElementById(`tab-${tab}`).focus();
+}
+
+function bindInfoEvents() {
+  const dialog = document.getElementById("info-dialog");
+
+  document.querySelectorAll("[data-info]").forEach((btn) => {
+    btn.addEventListener("click", () => openInfo(btn.dataset.info));
+  });
+  document.getElementById("info-close").addEventListener("click", () => dialog.close());
+  // A click on the backdrop lands on the <dialog> element itself.
+  dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+
+  const tablist = dialog.querySelector('[role="tablist"]');
+  tablist.addEventListener("click", (e) => {
+    const tab = e.target.closest('[role="tab"]');
+    if (tab) selectInfoTab(tab.id.replace("tab-", ""), { focus: true });
+  });
+  tablist.addEventListener("keydown", (e) => {
+    const current = INFO_TABS.findIndex((t) => document.getElementById(`tab-${t}`).getAttribute("aria-selected") === "true");
+    const moves = { ArrowRight: current + 1, ArrowLeft: current - 1, Home: 0, End: INFO_TABS.length - 1 };
+    if (!(e.key in moves)) return;
+    e.preventDefault();
+    const next = (moves[e.key] + INFO_TABS.length) % INFO_TABS.length;
+    selectInfoTab(INFO_TABS[next], { focus: true });
+  });
+
+  // "?" opens Help, unless the user is typing in a field.
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "?" || document.querySelector("dialog[open]")) return;
+    if (e.target.closest("input, textarea, select, [contenteditable]")) return;
+    e.preventDefault();
+    openInfo("help");
   });
 }
 
@@ -917,9 +1348,12 @@ function init() {
   fillSelect(document.getElementById("flt-priority"), PRIORITIES, { includeAll: true });
 
   document.getElementById("board").tabIndex = -1;
+  document.getElementById("about-version").textContent = APP_VERSION;
   bindBoardEvents();
   bindFilterEvents();
   bindHeaderEvents();
+  bindInfoEvents();
+  applyTheme();
 
   seedTasks();
   renderBoard();

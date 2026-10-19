@@ -1,10 +1,17 @@
-# IT PMO Kanban Board
+# Throughline: IT PMO Kanban Board
 
-A single-file Kanban board for a fictitious bank's IT Project Management Office. It's built for demos and training: log a task, move it across the board, and get an email notification when a new task is added.
+Throughline is a single-file Kanban board for a fictitious bank's IT Project Management Office. It's built for demos and training: log a task, move it across the board, and get an email notification when a new task is added.
 
 Everything lives in `index.html`. There's no build step, no dependencies and no server.
 
 > This is a demo. It doesn't use any real bank's branding and isn't connected to any real system.
+
+## Live demo
+
+- **v2 (Throughline):** https://sbnsalam.github.io/it-pmo-kanban/v2/
+- **v1 (original):** https://sbnsalam.github.io/it-pmo-kanban/ (frozen at tag `v1.0.0`)
+
+The Pages workflow serves `index.html` from the `v1.0.0` tag at the site root and the current `main` under `/v2/`.
 
 ## Getting started
 
@@ -17,14 +24,16 @@ The board starts with seed tasks. Their due dates are set relative to today, so 
 ## Features
 
 - **Four columns:** Backlog, In Progress, Blocked, Done. Each column header shows a count of its visible tasks.
-- **Add Task form** with inline validation. Title, Assignee and Due Date are required. You can also set Description, Project / Workstream, Category, Priority and Status.
-- **Task IDs** are generated as `UOB-ITPM-0001`, `UOB-ITPM-0002`, and so on.
+- **Add Task panel** slides in from the right when you click **+ Add Task**, with inline validation. Title, Assignee and Due Date are required. You can also set Description, Project / Workstream, Category, Priority and Status.
+- **Task IDs** are generated as `ITPM-0001`, `ITPM-0002`, and so on.
 - **Moving tasks:** drag a card to another column, or use the card's **Move ▸** dropdown (keyboard friendly).
 - **Delete** with an inline "Delete? Yes / No" confirmation.
 - **Filters** by project, assignee (text match) and priority.
 - **Overdue highlighting:** a task is overdue when its due date has passed and it isn't Done.
 - **Header summary** of totals across all tasks, ignoring filters.
-- **Responsive:** the layout stacks into one column below 768px.
+- **Light and dark themes:** follows the system setting; the sun / moon button in the header switches it until the next refresh.
+- **Help, FAQ and About** in one modal guide opened from the header. Press `?` to open Help.
+- **Responsive:** the board goes two-up below 1200px and stacks into one column below 768px.
 - **Email notification** for each new task, sent through [FormSubmit](https://formsubmit.co).
 
 ### Reference data
@@ -58,7 +67,9 @@ These constants sit at the top of the script:
 | Constant | Default | Purpose |
 |---|---|---|
 | `FORMSUBMIT_ENDPOINT` | `https://formsubmit.co/ajax/YOUR_EMAIL@example.com` | Where notification emails are sent |
-| `TASK_ID_PREFIX` | `UOB-ITPM-` | Prefix for generated task IDs |
+| `APP_NAME` | `Throughline` | Name used in the email subject |
+| `APP_VERSION` | `2.0` | Shown on the About tab |
+| `TASK_ID_PREFIX` | `ITPM-` | Prefix for generated task IDs |
 | `TOAST_MS` | `4500` | How long toast messages stay up, in milliseconds |
 
 ## Design constraints
